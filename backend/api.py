@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from backend.routes.predict import predict_router
+from backend.database.connection import conn
 
 app = FastAPI()
 
@@ -21,6 +22,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
+    conn()
+
     print("service ready")
     global is_ready
     is_ready = True
