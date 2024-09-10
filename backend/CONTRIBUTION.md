@@ -27,3 +27,9 @@ pip install -r requirements.txt
 ```commandline
 pip freeze > Ваш_путь\requirements.txt
 ```
+
+Запуск сервиса локально
+
+
+Swagger доступен по адресу:
+http://localhost:8000/docs
