@@ -7,3 +7,11 @@ class Sale(SQLModel, table=True):
     store_id: str
     date_id: int
     cnt: int
+
+
+class Store(SQLModel):
+    store_id: str
+
+
+class Item(SQLModel):
+    item_id: str
