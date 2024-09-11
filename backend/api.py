@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from backend.routes.predict import predict_router
+from backend.routes.analytics import analytics_router
 from backend.database.connection import conn
 
 app = FastAPI()
@@ -30,6 +31,8 @@ def on_startup():
 
 
 app.include_router(predict_router, prefix="/prediction")
+app.include_router(analytics_router, prefix="/analytics")
+
 
 
 @app.get("/")
