@@ -1,6 +1,6 @@
-from backend.models.sales_dates import SalesDate
+from models.sales_dates import SalesDate
 import pandas as pd
-from backend.database.connection import engine_url
+from database.connection import engine_url
 
 
 def create_sales_dates(file):

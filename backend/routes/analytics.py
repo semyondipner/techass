@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from backend.models.sales import Store, Item
+from models.sales import Store, Item
 from typing import List
-from backend.database.connection import get_session
-from backend.services import sales as SalesService
+from database.connection import get_session
+from services import sales as SalesService
 
 analytics_router = APIRouter(tags=["Analytics"])
 

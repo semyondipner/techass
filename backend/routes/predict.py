@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, status
-from backend.models.prediction import Prediction
-from backend.database.connection import get_session
+from models.prediction import Prediction
+from database.connection import get_session
 import pandas as pd
-from backend.services import prices as PricesService
-from backend.services import sales_dates as SalesDatesService
-from backend.services import sales as SalesService
-from backend.models.price import Price
+from services import prices as PricesService
+from services import sales_dates as SalesDatesService
+from services import sales as SalesService
+from models.price import Price
 from zipfile import ZipFile
 
 predict_router = APIRouter(tags=["Predict"])

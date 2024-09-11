@@ -1,7 +1,7 @@
-from backend.models.price import Price
+from models.price import Price
 from sqlmodel import select
 import pandas as pd
-from backend.database.connection import engine_url
+from database.connection import engine_url
 
 
 def create_price(price: Price, session):

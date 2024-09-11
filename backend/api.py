@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from backend.routes.predict import predict_router
-from backend.routes.analytics import analytics_router
-from backend.database.connection import conn
+from routes.predict import predict_router
+from routes.analytics import analytics_router
+from database.connection import conn
 
 app = FastAPI()
 

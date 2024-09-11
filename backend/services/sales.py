@@ -1,6 +1,6 @@
-from backend.models.sales import Sale, Store, Item
+from models.sales import Sale, Store, Item
 import pandas as pd
-from backend.database.connection import engine_url
+from database.connection import engine_url
 from typing import List
 
 
