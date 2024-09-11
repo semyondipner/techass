@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY requirements.txt /app
 
+RUN sudo apt install rustup
 RUN pip install --upgrade pip && pip install -r /app/requirements.txt
 
 EXPOSE 8080
