@@ -29,7 +29,7 @@ async def upload_data(file: UploadFile = File(...), session=Depends(get_session)
             detail="Переданный файл должен быть .zip архивом")
 
     with ZipFile(file.file, 'r') as zip_ref:
-       zip_ref.extractall(DATA_PATH)
+        zip_ref.extractall(DATA_PATH)
 
     PricesService.create_prices(DATA_PATH+"/shop_sales_prices.csv")
     SalesService.create_sales(DATA_PATH+"/shop_sales.csv")
