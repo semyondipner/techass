@@ -1,0 +1,215 @@
+.list {
+  width: 300px;
+  // box-shadow: 1px 4px 5px 0 rgba(80, 80, 80, 0.4);
+  background-color: white;
+  height: 100%; /* Устанавливаем высоту списка равную высоте контейнера */
+}
+
+.section-all {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.nap {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  
+  a:visited {
+    color: #140AF0;
+  }
+
+  &-link {
+      text-decoration: none;
+  }
+}
+
+.container {
+  display: flex;
+  height: 100vh; /* Устанавливаем высоту контейнера в 100% высоты экрана */
+}
+
+.mat-list-item {
+  overflow: visible; /* Разрешить содержимому перекрывать границы элемента */
+}
+
+
+.section {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+  justify-content: flex-start;
+}
+
+.text {
+  color: rgba(0, 0, 0, 0.9) !important;
+  padding-bottom: 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.menu {
+  color: rgba(0, 0, 0, 0.9) !important;
+  padding-bottom: 10px;
+}
+
+
+
+.text:hover {
+  color: #140AF0 !important;
+  opacity: 0.8;
+}
+
+.text.active {
+  color: #140AF0 !important; /* Цвет для активного элемента */
+  font-weight: bold;
+}
+
+.list-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+}
+
+.icon {
+  border: 1px solid #f7f8f8;
+  width: 250px;
+  border-radius: 50%;
+}
+
+.move {
+  background-color: #140AF0;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  position: fixed;
+  bottom: 30px;
+  right: 50px;
+  height: 60px;
+  width: 60px;
+  font-size: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: 0.15s;
+  cursor: pointer;
+  // box-shadow: 2px 5px 8px 0 rgba(80, 80, 80, 0.4);
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.list-item {
+  display: flex;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f8f8f8;
+  color: #444;
+  text-align: center;
+  padding: 10px 0;
+
+  padding-right: 600px;
+}
+
+section.section {
+  justify-content: space-between;
+}
+
+// .col-md-4 {
+//     margin-top: 15px;
+// }
+
+.menu-item {
+  margin-left: 16px;
+  margin-bottom: 0;
+  font-weight: 400;
+  margin-top: 15px;
+}
+
+.list-icon {
+  width: 25px;
+  height: 25px;
+  margin-left: 16px;
+}
+
+.list-container {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.list-divider {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.list-item { 
+  display: flex; 
+  align-items: center; /* Выравнивание по центру по вертикали */
+}
+
+.list-icon { 
+  width: 25px; /* Установите ширину иконки */
+  height: 25px; /* Установите высоту иконки */
+}
+
+.text {
+  color: rgba(0, 0, 0, 0.9) !important; 
+  font-size: 14px; 
+  cursor: pointer; 
+}
+
+.mat-list-item {
+  padding: 0; /* Удалите отступы у элемента списка */
+}
+
+.mat-list-item:hover {
+  background: transparent; /* Убедитесь, что фон не перекрывает стиль при наведении */
+}
+
+.phone {
+  width: 85%;
+}
+
+
+::ng-deep {
+  .mdc-list-item__content::before {
+    content: ''; /* Или установите это в 'none', чтобы убрать его */
+  }
+  
+  .mat-mdc-list-item-title::before {
+    content: ''; /* Убираем контент, если он есть */
+  }
+
+  .mat-list-icon::before,
+.mat-list-icon::after,
+.mdc-list-item__content::before {
+  content: none !important; /* Зачеркнуть любые псевдоэлементы */
+}
+
+.mat-mdc-list-item-title::before {
+  content: none !important; /* Убираем контент, если он есть */
+}
+}
+
+.date {
+
+  &-form {
+    width: 250px;
+  }
+
+  &-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+}

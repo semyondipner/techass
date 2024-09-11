@@ -1,0 +1,84 @@
+<div class="container">
+
+  <mat-list role="list" class="list">
+    <ng-container>
+      <div class="nap">
+        <h1> <a href="" class="nap-link">NAPOLEON IT</a> </h1>
+      </div>
+    </ng-container>
+
+
+  <mat-divider></mat-divider>
+
+<ng-container>
+  <div class="date-container">
+    <mat-form-field class="date-form">
+      <mat-label>Выберите период</mat-label>
+      <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Начало">
+        <input matEndDate formControlName="end" placeholder="Конец">
+      </mat-date-range-input>
+
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </div>
+</ng-container>
+
+  <mat-divider></mat-divider>
+  <!-- <h2 class="menu-item">[ Главная ]</h2> -->
+
+
+
+
+  <h2 class="menu-item">[ Аналитика спроса ]</h2>
+
+  <ng-container *ngFor="let link of listAnalytics">
+    <div class="list-container">
+    <img class="list-icon" [src]="'../assets/img/menu/' + link.png + '.png'" alt="">
+
+    <mat-list-item role="listitem">
+      <div class="list-item" >
+        <a matListItemTitle [class.active]="link.isActive" [routerLink]="link.url" class="text">
+           {{ link.name }}
+        </a>
+      </div>
+
+    </mat-list-item>
+
+  </div>
+
+
+  
+  </ng-container>
+  <mat-divider class="list-divider"></mat-divider>
+  <h2 class="menu-item">[ Источники ]</h2>
+  <ng-container *ngFor="let link of listMain">
+    <div class="list-container">
+
+      <img class="list-icon" [src]="'../assets/img/menu/' + link.png + '.png'" alt="">
+
+      <mat-list-item role="listitem">
+        <div class="list-item" >
+          <a matListItemTitle [class.active]="link.isActive" [routerLink]="link.url" class="text">
+             {{ link.name }}
+          </a>
+        </div>
+
+      </mat-list-item>
+    </div>
+
+  </ng-container>
+  </mat-list>
+  <ng-container>
+    <div class="phone">
+      <section class="section section-all">
+        <router-outlet></router-outlet>
+        <nav>
+          <div class="footer">© 2024 Techass. All rights reserved.</div>
+        </nav>
+      </section>
+
+    </div>
+  </ng-container>
+</div>

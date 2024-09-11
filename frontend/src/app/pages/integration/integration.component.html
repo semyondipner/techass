@@ -1,0 +1,81 @@
+<section class="section">
+  <mat-tab-group (selectedTabChange)="applyRegionFilter()" class="mat-tab">
+    <mat-tab label="Добавление источников">
+      <div class="card" *ngIf="isFiltersActive">
+        <h2>Добавление источников</h2>
+        <div class="wrapper">
+          <div id="chartOptions">
+            <apx-chart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [dataLabels]="chartOptions.dataLabels"
+            [plotOptions]="chartOptions.plotOptions"
+            [yaxis]="chartOptions.yaxis"
+            [xaxis]="chartOptions.xaxis"
+            [stroke]="chartOptions.stroke"
+            [grid]="chartOptions.grid"
+            [fill]="chartOptions.fill"
+            [annotations]="chartOptions.annotations"
+          ></apx-chart>
+          </div>
+          <div class="spinner" *ngIf="isLoading">
+            <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  
+    <mat-tab label="Удаление источников">
+      <div class="card" *ngIf="isFiltersActive">
+        <h2>Удаление источников</h2>
+        <div class="wrapper">
+          <div id="chartOptionsBalance">
+            <apx-chart
+            [series]="chartOptionsBalance.series"
+            [chart]="chartOptionsBalance.chart"
+            [dataLabels]="chartOptionsBalance.dataLabels"
+            [plotOptions]="chartOptionsBalance.plotOptions"
+            [yaxis]="chartOptionsBalance.yaxis"
+            [xaxis]="chartOptionsBalance.xaxis"
+            [stroke]="chartOptionsBalance.stroke"
+            [grid]="chartOptionsBalance.grid"
+            [fill]="chartOptionsBalance.fill"
+            [annotations]="chartOptionsBalance.annotations"
+          ></apx-chart>
+          </div>
+          <div class="spinner" *ngIf="isLoading">
+            <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+
+
+  <div class="card">
+    <h2 *ngIf="!isFiltersActive">Интеграции</h2>
+
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Выберите регион"
+        [formControl]="regControl"
+        [matAutocomplete]="autoRegion"
+      />
+      <mat-autocomplete #autoRegion="matAutocomplete">
+        <mat-option
+          *ngFor="let option of filteredRegOptions | async"
+          [value]="option"
+          >{{ option }}</mat-option
+        >
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <div>
+      <button mat-button class="btn" (click)="applyRegionFilter()">
+        Применить фильтр
+      </button>
+    </div>
+  </div>
+</section>
