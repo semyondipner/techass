@@ -1,12 +1,10 @@
-# serviceNPO
-Цифровой прорыв 2024 Сочи 
-
-
 # Frontend
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.0.
 
 ## Development server
+
+Run `npm install` for download node modules 
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
