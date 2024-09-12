@@ -121,8 +121,8 @@ def get_dataset(
     ) -> pd.DataFrame:
     query = QUERY + " "
     query = query.format(
-        date_srt="2011-01-29",
-        date_end="2015-01-21"
+        date_srt=date_str,
+        date_end=date_end
     )
     engine = create_engine(
     'postgresql+psycopg2://techass:techass987@51.250.39.116:5432/techass',
@@ -216,14 +216,12 @@ def get_charts(df: pd.DataFrame) -> dict:
         anomalies_df
         [anomalies_df["metric"] == "cnt"]
         .reset_index(drop=True)
-        .drop(columns=["metric"])
         .fillna(0)
     ).to_dict('split')
     gmv_dynamics = round(
         anomalies_df
         [anomalies_df["metric"] == "gmv"]
         .reset_index(drop=True)
-        .drop(columns=["metric"])
         .fillna(0)
     ).to_dict('split')
     return {
@@ -254,3 +252,14 @@ async def get_charts_arm(request: AnalyticsPredictions):
         request.store_ids, request.items_ids
     )
     return get_charts(df)
+
+# date_str = "2011-01-01"
+# date_end = "2012-01-01"
+# df = get_dataset(date_str, date_end, "All", "All")
+
+# dynamics_df = df.groupby(["date"]).agg({col: "sum" for col in ["cnt", "gmv"]}).reset_index()
+# dynamics_df = prepare_df(dynamics_df, index_list=["date"])
+# anomalies_df = get_anomalies(dynamics_df, groupby_list=["metric"])
+
+# dynamics_df
+# anomalies_df
