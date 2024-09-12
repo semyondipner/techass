@@ -1,4 +1,5 @@
 from models.sales import Sale, Store, Item
+from models.sales_dates import SalesDate
 import pandas as pd
 from database.connection import engine_url
 from typing import List
@@ -28,3 +29,21 @@ def get_items(session) -> List[Item]:
     print("get_items")
     print(results)
     return results
+
+
+def get_dataframe(unique_item_ids, session):
+    query = session.query(Sale.item_id, Sale.store_id, Sale.date_id, Sale.cnt, SalesDate.date, SalesDate.year,
+                          SalesDate.wm_yr_wk
+                          ).join(SalesDate, Sale.date_id == SalesDate.date_id).filter(Sale.item_id.in_(unique_item_ids))
+
+    # Выполнение запроса и получение результатов
+    results = query.all()
+    dict_list = [result._asdict() for result in results]
+
+    # Преобразование списка словарей в DataFrame
+    df = pd.DataFrame(dict_list)
+
+    df['store_item_id'] = df.item_id
+    df.item_id = df.item_id.apply(lambda x: x.split('_')[-1])
+
+    return df

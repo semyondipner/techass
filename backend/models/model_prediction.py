@@ -8,6 +8,7 @@ from datetime import timedelta
 from tqdm.notebook import tqdm
 from chronos import ChronosPipeline
 
+
 class SalesPredictor:
     def __init__(self, data_path: str, prediction_length: int, store_item_ids: list):
         self.store_item_ids = store_item_ids
