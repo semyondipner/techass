@@ -238,7 +238,7 @@ def get_charts(df: pd.DataFrame) -> dict:
 async def get_kpis_arm(request: AnalyticsPredictions):
     df = get_dataset(
         request.date_str, request.date_end,
-        request.store_id, request.items_id
+        request.store_ids, request.items_ids
     )
     return get_kpi(df)
 
@@ -246,7 +246,7 @@ async def get_kpis_arm(request: AnalyticsPredictions):
 async def get_tables_arm(request: AnalyticsPredictions):
     df = get_dataset(
         request.date_str, request.date_end,
-        request.store_id, request.items_id
+        request.store_ids, request.items_ids
     )
     return get_tables(df)
 
@@ -254,6 +254,6 @@ async def get_tables_arm(request: AnalyticsPredictions):
 async def get_charts_arm(request: AnalyticsPredictions):
     df = get_dataset(
         request.date_str, request.date_end,
-        request.store_id, request.items_id
+        request.store_ids, request.items_ids
     )
     return get_charts(df)
