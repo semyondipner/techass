@@ -1,4 +1,4 @@
-from sqlmodel import BaseModel
+from pydantic import BaseModel
 
 
 class AnalyticsPredictions(BaseModel):

@@ -17,9 +17,9 @@ async def get_items(session=Depends(get_session)):
     items = SalesService.get_items(session)
     return items
 
-# =======================
-#   Аналитические ручки
-# =======================
+# # =======================
+# #   Аналитические ручки
+# # =======================
 
 # Data Processing
 import json
