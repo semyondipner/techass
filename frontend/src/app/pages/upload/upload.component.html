@@ -5,14 +5,12 @@
     <div class="container">
       <div class="row mt-5">
         <div class="col-md-4">
-          <label for="formFile" class="form-label">Загрузите файл .csv </label>
-          <input
-            (change)="onFilechange($event)"
-            class="form-control"
-            type="file"
-            id="formFile"
-          />
-          <button (click)="upload()" type="button" class="btn btn-primary mt-3">
+          <label for="formFile" class="form-label">
+            <h4>Загрузите файл в формате <b>.zip</b> <br /> Для этого выберите или перетащите его в ячейку</h4>
+          </label>
+          <input (change)="onFilechange($event)" class="form-control" type="file" id="formFile" />
+          <button mat-button class="btn"   [ngClass]="{ 'disabled': !isFileExist }" 
+          [disabled]="!isFileExist" (click)="upload()">
             Загрузить
           </button>
         </div>

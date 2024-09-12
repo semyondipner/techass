@@ -9,6 +9,7 @@ import { UploadComponent } from './upload.component';
 import { UploadService } from './services/upload.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -20,11 +21,13 @@ import { MatSortModule } from '@angular/material/sort';
     CommonModule,
     RouterModule,
     UploadRoutingModule,
-    
+
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatButtonModule,
+
 
   ],
   providers: [

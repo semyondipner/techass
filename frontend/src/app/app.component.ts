@@ -9,19 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-
-export const CUSTOM_DATE_FORMATS = {
-  parse: {
-    dateInput: 'YYYY-DD-MM',
-  },
-  display: {
-    dateInput: 'YYYY-DD-MM',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
+import { DateAdapter } from '@angular/material/core';
 
 
 @Component({
@@ -30,10 +18,6 @@ export const CUSTOM_DATE_FORMATS = {
   imports: [CommonModule, MatNativeDateModule, MatFormFieldModule, MatDatepickerModule, FormsModule, ReactiveFormsModule, JsonPipe, MatFormFieldModule, RouterOutlet, MatDatepickerModule, MatDividerModule, MatListModule, RouterModule, MatIconModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
-  providers: [
-    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
-  ],
 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -58,7 +42,7 @@ export class AppComponent {
     // { name: 'Спектральный анализ', isActive: false, url: '', png: 'radio-waves' },
   ];
 
-  constructor(private router: Router, private _fb: FormBuilder) {
+  constructor(private router: Router, private _fb: FormBuilder, private _dateAdapter: DateAdapter<Date>) {
     const list = [...this.listMain, ...this.listAnalytics]
 
     this.range = this._fb.group({
@@ -66,6 +50,7 @@ export class AppComponent {
       end: [],
     });
 
+    this._dateAdapter.setLocale('ru')
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

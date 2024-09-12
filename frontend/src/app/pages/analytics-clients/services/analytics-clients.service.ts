@@ -9,27 +9,12 @@ import { IAccChurn, IChurnYears } from '../../../models/home/home.model';
 export class AnalyticsClientsService {
   constructor(private _httpClient: HttpClient) {}
 
-  getData() {
-    return this._httpClient.get<IChurnYears[]>(URLs.churn.years);
+  getStores() {
+    return this._httpClient.get<{ store_id: string }[]>(URLs.analytics.analytics);
   }
 
-  getAccChurn() {
-    return this._httpClient.get<IAccChurn[]>(URLs.churn.acc);
+  getItems() {
+    return this._httpClient.get<{ item_id: string }[]>(URLs.analytics.items);
   }
 
-  // getSingleDomen1(item: number) {
-  //   return this._httpClient.get<IHome[]>(URLs.domen1.method1 + `/${item}`);
-  // }
-
-  // createUser(item: IHome) {
-  //   return this._httpClient.post(URLs.domen1.method1, item);
-  // }
-
-  // updateDomen1(item: IHome) {
-  //   return this._httpClient.put(URLs.domen1.method1, item);
-  // }
-
-  // deleteDomen1(item: number) {
-  //   return this._httpClient.delete(URLs.domen1.method1 + `/${item}`);
-  // }
 }
