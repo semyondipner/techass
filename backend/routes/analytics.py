@@ -184,7 +184,7 @@ def get_tables(df: pd.DataFrame) -> dict:
     df
     .groupby(["item_id"])
     .agg(
-        uniq_item_sale=('store_id', 'nunique'),
+        uniq_store_sale=('store_id', 'nunique'),
         sales=('cnt', 'sum'),
         gmv=('gmv', 'sum')
     )
@@ -252,3 +252,11 @@ async def get_charts_arm(request: AnalyticsPredictions):
         request.store_ids, request.items_ids
     )
     return get_charts(df)
+
+
+
+date_str = "2011-01-01"
+date_end = "2012-01-01"
+df = get_dataset(date_str, date_end, "All", "All")
+
+get_tables(df)
