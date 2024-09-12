@@ -30,6 +30,26 @@ pip freeze > Ваш_путь\requirements.txt
 
 Запуск сервиса локально
 
+В папке backend выполните команду
+```
+python api.py
+```
+Сервис будет доступен по адресу: 
+http://0.0.0.0:8080/
 
 Swagger доступен по адресу:
-http://localhost:8000/docs
+http://0.0.0.0:8080/docs
+
+### Сборка докер образа
+
+В папке backend выполните команду
+```
+docker build -t backend .
+```
+После сборки образа выполните команду: 
+
+```commandline
+docker run -p 8080:8080 backend 
+```
+
+
