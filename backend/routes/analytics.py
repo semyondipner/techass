@@ -169,7 +169,7 @@ def get_kpi(df: pd.DataFrame) -> dict:
     }
 
 def get_tables(df: pd.DataFrame) -> dict:
-    table_shop_sales = (
+    table_shop_sales = round(
     df
     .groupby(["store_id"])
     .agg(
@@ -179,9 +179,8 @@ def get_tables(df: pd.DataFrame) -> dict:
     )
     .sort_values("sales", ascending=False)
     .reset_index()
-    .to_dict('split')
-    )
-    table_item_sales = (
+    ).to_dict('split')
+    table_item_sales = round(
     df
     .groupby(["item_id"])
     .agg(
@@ -191,9 +190,8 @@ def get_tables(df: pd.DataFrame) -> dict:
     )
     .sort_values("sales", ascending=False)
     .reset_index()
-    .to_dict('split')
-    )
-    table_shop_item_sales = (
+    ).to_dict('split')
+    table_shop_item_sales = round(
     df
     .groupby(["store_id", "item_id"])
     .agg(
@@ -202,8 +200,7 @@ def get_tables(df: pd.DataFrame) -> dict:
     )
     .sort_values("sales", ascending=False)
     .reset_index()
-    .to_dict('split')
-    )
+    ).to_dict('split')
     return {
         "table_shop_sales": table_shop_sales,
         "table_item_sales": table_item_sales,
@@ -215,20 +212,18 @@ def get_charts(df: pd.DataFrame) -> dict:
     dynamics_df = prepare_df(dynamics_df, index_list=["date"])
     anomalies_df = get_anomalies(dynamics_df, groupby_list=["metric"])
     anomalies_df.drop(columns=["std"], inplace=True)
-    sales_dynamics = (
+    sales_dynamics = round(
         anomalies_df
         [anomalies_df["metric"] == "cnt"]
         .reset_index(drop=True)
         .drop(columns=["metric"])
-        .to_dict('split')
-    )
-    gmv_dynamics = (
+    ).to_dict('split')
+    gmv_dynamics = round(
         anomalies_df
         [anomalies_df["metric"] == "gmv"]
         .reset_index(drop=True)
         .drop(columns=["metric"])
-        .to_dict('split')
-    )
+    ).to_dict('split')
     return {
         "sales_dynamics": sales_dynamics,
         "gmv_dynamics": gmv_dynamics
