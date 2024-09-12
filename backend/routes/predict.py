@@ -4,6 +4,7 @@ from database.connection import get_session
 from services import prices as PricesService
 from services import sales_dates as SalesDatesService
 from services import sales as SalesService
+from services import prediction as PredictionService
 from zipfile import ZipFile
 from datetime import timedelta
 import tempfile
@@ -13,23 +14,26 @@ import torch
 import numpy as np
 from chronos import ChronosPipeline
 import os
+from database.connection import engine_url
 
 predict_router = APIRouter(tags=["Predict"])
 
 DATA_PATH = "zip_data"
 
-os.environ["CURL_CA_BUNDLE"] = "/Users/a.s.senina/PycharmProjects/techass/cisco.crt"
+# os.environ["CURL_CA_BUNDLE"] = "/Users/a.s.senina/PycharmProjects/techass/cisco.crt"
 
-pipeline = ChronosPipeline.from_pretrained(
-        "amazon/chronos-t5-tiny",
-        device_map="cpu",  # на маке mps, но надо будет поменять на "cpu"
-        torch_dtype=torch.bfloat16,
-    )
+#pipeline = ChronosPipeline.from_pretrained(
+ #       "amazon/chronos-t5-tiny",
+  #      device_map="cpu",  # на маке mps, но надо будет поменять на "cpu"
+   #     torch_dtype=torch.bfloat16,
+   # )
 
-@predict_router.get("/predict", response_model=Prediction)
-async def predict():
-    info = "Наше предсказание"
-    return Prediction(prediction=info)
+
+@predict_router.get("/predict", response_model=PredictionResponce)
+async def predict(session=Depends(get_session)):
+    df = PredictionService.get_dataframe(session)
+
+    return df
 
 
 @predict_router.post("/upload_data", response_model=PredictionResponce)
