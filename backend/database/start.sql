@@ -1,19 +1,17 @@
 CREATE TABLE price (
-	id SERIAL NOT NULL,
 	item_id VARCHAR NOT NULL,
 	store_id VARCHAR NOT NULL,
 	wm_yr_wk INTEGER NOT NULL,
 	sell_price FLOAT NOT NULL,
-	PRIMARY KEY (id)
+	PRIMARY KEY (item_id, store_id, wm_yr_wk)
 )
 
 CREATE TABLE sale (
-	id SERIAL NOT NULL,
 	item_id VARCHAR NOT NULL,
 	store_id VARCHAR NOT NULL,
 	date_id INTEGER NOT NULL,
 	cnt INTEGER NOT NULL,
-	PRIMARY KEY (id)
+	PRIMARY KEY (item_id, store_id, date_id)
 )
 
 CREATE TABLE salesdate (

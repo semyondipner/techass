@@ -2,8 +2,7 @@ from sqlmodel import Field, SQLModel
 
 
 class Price(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
-    item_id: str
-    store_id: str
-    wm_yr_wk: int
+    item_id: str = Field(primary_key=True)
+    store_id: str = Field(primary_key=True)
+    wm_yr_wk: int = Field(primary_key=True)
     sell_price: float
