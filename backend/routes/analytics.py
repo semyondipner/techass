@@ -234,7 +234,7 @@ def get_charts(df: pd.DataFrame) -> dict:
         "gmv_dynamics": gmv_dynamics
     }
 
-@analytics_router.post("/get_kpis", response_model=AnalyticsPredictions)
+@analytics_router.post("/get_kpis")
 async def get_kpis_arm(request: AnalyticsPredictions):
     df = get_dataset(
         request.date_str, request.date_end,
@@ -242,7 +242,7 @@ async def get_kpis_arm(request: AnalyticsPredictions):
     )
     return get_kpi(df)
 
-@analytics_router.get("/get_tables", response_model=List[Item])
+@analytics_router.post("/get_tables")
 async def get_tables_arm(request: AnalyticsPredictions):
     df = get_dataset(
         request.date_str, request.date_end,
@@ -250,7 +250,7 @@ async def get_tables_arm(request: AnalyticsPredictions):
     )
     return get_tables(df)
 
-@analytics_router.get("/get_charts", response_model=List[Item])
+@analytics_router.post("/get_charts")
 async def get_charts_arm(request: AnalyticsPredictions):
     df = get_dataset(
         request.date_str, request.date_end,
