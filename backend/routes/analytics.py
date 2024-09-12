@@ -252,14 +252,3 @@ async def get_charts_arm(request: AnalyticsPredictions):
         request.store_ids, request.items_ids
     )
     return get_charts(df)
-
-# date_str = "2011-01-01"
-# date_end = "2012-01-01"
-# df = get_dataset(date_str, date_end, "All", "All")
-
-# dynamics_df = df.groupby(["date"]).agg({col: "sum" for col in ["cnt", "gmv"]}).reset_index()
-# dynamics_df = prepare_df(dynamics_df, index_list=["date"])
-# anomalies_df = get_anomalies(dynamics_df, groupby_list=["metric"])
-
-# dynamics_df
-# anomalies_df
