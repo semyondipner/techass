@@ -1,8 +1,4 @@
 """ Пример ручки для Аналитического Dashboard """
-
-import io
-import os
-
 # Data Processing
 import json
 import numpy as np # For Anomaly get_charts
