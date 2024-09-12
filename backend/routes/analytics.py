@@ -217,14 +217,14 @@ def get_charts(df: pd.DataFrame) -> dict:
         [anomalies_df["metric"] == "cnt"]
         .reset_index(drop=True)
         .drop(columns=["metric"])
-        .fillna('')
+        .fillna(0)
     ).to_dict('split')
     gmv_dynamics = round(
         anomalies_df
         [anomalies_df["metric"] == "gmv"]
         .reset_index(drop=True)
         .drop(columns=["metric"])
-        .fillna('')
+        .fillna(0)
     ).to_dict('split')
     return {
         "sales_dynamics": sales_dynamics,
