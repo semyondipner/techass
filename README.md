@@ -6,3 +6,5 @@
 ![photo_2024-09-06 22 01 51](https://github.com/user-attachments/assets/45a27082-c7db-4a16-8074-dc59b22d8f27)
 ## Архитектурная схема 
 <img width="894" alt="Снимок экрана 2024-09-09 в 21 19 56" src="https://github.com/user-attachments/assets/f1b6b3d1-a0eb-4ad9-a3d3-047a6351f4b7">
+## API
+http://51.250.47.132:8080/docs#/
