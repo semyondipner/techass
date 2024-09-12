@@ -5,10 +5,6 @@
 
 #### [Презентация проекта](https://docs.google.com/presentation/d/1wecG92sXX-PhOSgc35qVU9vLXxRAGjK4UbjwqzKKaFM/edit?usp=sharing)
 
-- [ ] Чекпоинт 1
-- [ ] Чекпоинт 2
-- [ ] Защита
-
 ## AI Product Hack (AI Talented Hub 2024-2026) 
 Кейс 06 - Прогнозирование спроса для Ритейлеров
 
