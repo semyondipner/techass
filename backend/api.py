@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from routes.predict import predict_router
+from routes.loader import loader_router
 from routes.analytics import analytics_router
 from database.connection import conn
 
@@ -30,7 +30,7 @@ def on_startup():
     is_ready = True
 
 
-app.include_router(predict_router, prefix="/prediction")
+app.include_router(loader_router, prefix="/loader")
 app.include_router(analytics_router, prefix="/analytics")
 
 

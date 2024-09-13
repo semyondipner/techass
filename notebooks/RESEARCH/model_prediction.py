@@ -5,12 +5,13 @@ import pandas as pd
 import numpy as np
 import torch
 from datetime import timedelta
+from datetime import datetime
 from tqdm.notebook import tqdm
 from chronos import ChronosPipeline
 
 
 class SalesPredictor:
-    def __init__(self, data_path: str, prediction_length: int, store_item_ids: list, start_prediction_date: dt.datetime):
+    def __init__(self, data_path: str, prediction_length: int, store_item_ids: list, start_prediction_date: datetime):
         
         self.start_prediction_date = start_prediction_date
         self.store_item_ids = store_item_ids
