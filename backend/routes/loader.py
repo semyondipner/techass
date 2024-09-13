@@ -1,18 +1,15 @@
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, status
 from models.prediction import Prediction, PredictionResponce
 from database.connection import get_session
-from services import prices as PricesService
 from services import sales_dates as SalesDatesService
+from services import decomposition as DecompositionService
 from services import sales as SalesService
 from zipfile import ZipFile
-from datetime import timedelta
 import tempfile
 import sqlalchemy
 import pandas as pd
-import torch
-import numpy as np
-import os
-from database.connection import engine_url
+from models.decomposition import Decomposition, DecompositionItem
+from typing import List
 
 loader_router = APIRouter(tags=["DataLoader"])
 
@@ -63,6 +60,12 @@ async def upload_data(file: UploadFile = File(...), session=Depends(get_session)
     # responce =
 
     return PredictionResponce(predictions=[])
+
+
+@loader_router.get("/get_decomposition", response_model=List[DecompositionItem])
+async def get_decomposition(store_id_item: str, session=Depends(get_session)):
+    result = DecompositionService.get_dataframe(store_id_item, session)
+    return result
 
 
 def load_file(func, file_path):
