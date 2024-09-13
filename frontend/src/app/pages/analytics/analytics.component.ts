@@ -80,9 +80,6 @@ export class AnalyticsComponent extends Destroyer implements OnInit{
         });
 }
 updateChartOptions(): void {
-  // Извлекаем данные для графика
-
-
   const dates: string[] = [];
     const medianData: number[] = [];
     const lowData: number[] = [];
@@ -141,7 +138,7 @@ updateChartOptions(): void {
       },   
       yaxis: {
           title: {
-              text: 'Значение'
+              text: 'Продажи'
           },
           labels: {
               formatter: (value: number) => value.toFixed(2)
@@ -163,7 +160,7 @@ updateChartOptions(): void {
           opacityTo: 0.85,
         }
       },
-      colors: ["#00E396", "#FF4560", "#008FFB"] 
+      colors: ["#5F5F5F", "#FF4560", "#008FFB"] 
   };
   this.isLoading = false;
 

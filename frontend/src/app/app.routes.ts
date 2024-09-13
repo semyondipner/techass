@@ -17,6 +17,14 @@ export const routes: Routes = [
     path: 'upload', 
     loadChildren: () => import('./pages/upload/upload.module').then(m => m.UploadModule),
   },
+  { 
+    path: 'decomposition', 
+    loadChildren: () => import('./pages/decomposition/decomposition.module').then(m => m.DecompositionModule),
+  },
+  { 
+    path: 'clustering', 
+    loadChildren: () => import('./pages/clustering/clustering.module').then(m => m.ClusteringModule),
+  },
   // { 
   //   path: 'integration', 
   //   loadChildren: () => import('./pages/integration/integration.module').then(m => m.IntegrationModule),

@@ -1,5 +1,34 @@
 <section class="section" *ngIf="!isLoading" >
   <h1 class="section__title">Прогнозирование спроса</h1>
+  <!-- <div class="card">
+    <h2>Фильтры</h2>
+    <form [formGroup]="filters" class="form">
+
+      <mat-form-field appearance="outline" class="filter__item">
+        <mat-label>Товары</mat-label>
+        <mat-select formControlName="items_ids" [hideSingleSelectionIndicator]="true" multiple>
+          <mat-option [value]="'All'">All</mat-option>
+          <mat-option *ngFor="let item of items$ | async" [value]="item.item_id">
+            {{ item.item_id }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter__item date-form">
+        <mat-label>Выберите период</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="date_str" placeholder="С">
+          <input matEndDate formControlName="date_end" placeholder="По">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </form>
+    <button mat-button class="btn" [ngClass]="{ 'disabled': filters.invalid }" [disabled]="filters.invalid"
+      (click)="createReport()">
+      Применить фильтры
+    </button>
+  </div> -->
 
   <div class="card">
       <apx-chart

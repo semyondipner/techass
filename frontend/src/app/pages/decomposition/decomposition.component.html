@@ -1,0 +1,94 @@
+<section class="section" *ngIf="!isLoading">
+  <h1 class="section__title">Декомпозиция временого ряда</h1>
+
+  <div class="card">
+    <h2>Фильтры</h2>
+    <form [formGroup]="filters" class="form">
+      <mat-form-field appearance="outline" class="filter__item">
+        <mat-label>Магазин-товар</mat-label>
+        <mat-select formControlName="store_id_item" [hideSingleSelectionIndicator]="true">
+          <mat-option *ngFor="let store of stores$ | async" [value]="store.item_id">
+            {{ store.item_id }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+    <button mat-button class="btn" [ngClass]="{ 'disabled': filters.invalid }" [disabled]="filters.invalid"
+      (click)="createReport()">
+      Применить фильтры
+    </button>
+  </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <h2>Динамика количества продаж</h2>
+    <apx-chart 
+      [series]="salesChartOptions.series" 
+      [chart]="salesChartOptions.chart" 
+      [dataLabels]="salesChartOptions.dataLabels"
+      [stroke]="salesChartOptions.stroke" 
+      [xaxis]="salesChartOptions.xaxis"
+      [yaxis]="salesChartOptions.yaxis"
+      [tooltip]="salesChartOptions.tooltip"
+      [colors]="salesChartOptions.colors"></apx-chart>
+  </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <h2>Динамика тренда</h2>
+    <apx-chart 
+      [series]="trendChartOptions.series" 
+      [chart]="trendChartOptions.chart" 
+      [dataLabels]="trendChartOptions.dataLabels"
+      [stroke]="trendChartOptions.stroke" 
+      [xaxis]="trendChartOptions.xaxis"
+      [yaxis]="trendChartOptions.yaxis"
+      [tooltip]="trendChartOptions.tooltip"
+      [colors]="trendChartOptions.colors"></apx-chart>
+  </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <h2>Динамика сезонности</h2>
+    <apx-chart 
+      [series]="seasonalityChartOptions.series" 
+      [chart]="seasonalityChartOptions.chart" 
+      [dataLabels]="seasonalityChartOptions.dataLabels"
+      [stroke]="seasonalityChartOptions.stroke" 
+      [xaxis]="seasonalityChartOptions.xaxis"
+      [yaxis]="seasonalityChartOptions.yaxis"
+      [tooltip]="seasonalityChartOptions.tooltip"
+      [colors]="seasonalityChartOptions.colors"></apx-chart>
+  </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <section *ngIf="dataTableShopSales.data.length > 0">
+      <mat-form-field class="filter">
+        <mat-label>Фильтровать</mat-label>
+        <input matInput (keyup)="applyFilter($event, dataTableShopSales)" placeholder="Поиск..." #input>
+      </mat-form-field>
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataTableShopSales">
+          <ng-container *ngFor="let column of displayedColumnsShopSales" [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef> {{ columnHeaderMapping[column] }} </th>
+            <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsShopSales"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsShopSales;"></tr>
+  
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="3">Нет данных, соответствующих запросу "{{input.value}}"</td>
+          </tr>
+        </table>
+  
+        <mat-paginator #paginatorShopSales [pageSize]="10" [pageSizeOptions]="[5, 10, 25]"
+          aria-label="Выберите страницу магазина">
+        </mat-paginator>
+      </div>
+  
+    </section>
+  </div>
+
+</section>
+
+<div *ngIf="isLoading" class="spinner-container">
+  <span class="loader"></span>
+</div>
