@@ -53,8 +53,6 @@ async def upload_data(file: UploadFile = File(...), session=Depends(get_session)
     'STORE_2_090',
     'Имитация айди без истории'
     ]
-    train = SalesService.get_dataframe(unique_item_ids, session)
-    print("train", train.head())
 
     print(unique_item_ids)
 
@@ -83,6 +81,12 @@ async def get_clusters(session=Depends(get_session)):
     print("result", result)
     return result
 
+
+@loader_router.get("/get_clusters_items", response_model=List[int])
+async def get_clusters_items(cluster: int, store_id: str, session=Depends(get_session)):
+    result = ClusteringService.get_clusters_items(cluster, store_id, session)
+    print("result", result)
+    return result
 
 def load_file(func, file_path):
     try:

@@ -37,3 +37,17 @@ class PredictionRequest(BaseModel):
     prediction_date: datetime
     items_id: List[str]
 
+
+class PredictItemId(BaseModel):
+    date: datetime
+    cnt: int
+    item_id: str
+
+
+class PredictHistoryItem(BaseModel):
+    date: datetime
+    low: float
+    median: float
+    high: float
+    item_id: str
+

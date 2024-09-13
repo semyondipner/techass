@@ -1,4 +1,4 @@
-from models.prediction import Prediction, PredictionItem, PredictionResponce, DayPrediction
+from models.prediction import Prediction, PredictionItem, PredictionResponce, DayPrediction, PredictItemId, PredictHistoryItem
 from typing import List
 from sqlmodel import select, delete
 from pandas import DataFrame
@@ -51,11 +51,9 @@ def get_dataframe(session):
     query = select(Prediction)
     results = session.exec(query)
 
-    # Создаем пустой список для объектов PredictionItem
     predictions: List[PredictionItem] = []
 
     for row in results:
-        # Создаем список day_prediction при помощи функции create_day_prediction
         day_prediction = [
             create_day_prediction(row, row.low, row.median, row.high)
         ]
@@ -73,3 +71,33 @@ def get_dataframe(session):
     response = PredictionResponce(predictions=predictions)
 
     return response
+
+
+def get_history_item_id(item_id, session):
+    query = session.query(SalesDate.date, Sale.cnt, Sale.item_id
+                          ).join(SalesDate, Sale.date_id == SalesDate.date_id).filter(Sale.item_id == item_id)
+
+    results = query.all()
+
+    items = []
+    for row in results:
+        predict_item = PredictItemId(date=row.date, cnt=row.cnt, item_id=row.item_id)
+        items.append(predict_item)
+
+    session.close()
+    return items
+
+
+def get_prediction_item_id(store_id, session):
+    query = session.query(Prediction.date, Prediction.low, Prediction.median, Prediction.high, Prediction.item_id
+                          ).filter(Prediction.store_id == store_id)
+
+    results = query.all()
+
+    items = []
+    for row in results:
+        predict_item = PredictHistoryItem(date=row.date, low=row.low, median=row.median, high=row.high, item_id=row.item_id)
+        items.append(predict_item)
+
+    session.close()
+    return items
