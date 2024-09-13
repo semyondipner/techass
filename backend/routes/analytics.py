@@ -184,7 +184,7 @@ def get_tables(df: pd.DataFrame) -> dict:
     df
     .groupby(["item_id"])
     .agg(
-        uniq_store_sale=('store_id', 'nunique'),
+        uniq_item_sale=('store_id', 'nunique'), # uniq_store_sale
         sales=('cnt', 'sum'),
         gmv=('gmv', 'sum')
     )
@@ -215,12 +215,14 @@ def get_charts(df: pd.DataFrame) -> dict:
     sales_dynamics = round(
         anomalies_df
         [anomalies_df["metric"] == "cnt"]
+        .drop(columns=["metric"])
         .reset_index(drop=True)
         .fillna(0)
     ).to_dict('split')
     gmv_dynamics = round(
         anomalies_df
         [anomalies_df["metric"] == "gmv"]
+        .drop(columns=["metric"])
         .reset_index(drop=True)
         .fillna(0)
     ).to_dict('split')
@@ -252,11 +254,3 @@ async def get_charts_arm(request: AnalyticsPredictions):
         request.store_ids, request.items_ids
     )
     return get_charts(df)
-
-
-
-date_str = "2011-01-01"
-date_end = "2012-01-01"
-df = get_dataset(date_str, date_end, "All", "All")
-
-get_tables(df)
