@@ -41,3 +41,32 @@ CREATE TABLE prediction (
 	prediction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	PRIMARY KEY (item_id, store_id, date)
 )
+
+CREATE TABLE clustering (
+	id SERIAL NOT NULL,
+	item_id VARCHAR NOT NULL,
+	store_id VARCHAR NOT NULL,
+	date_id INTEGER NOT NULL,
+	cnt INTEGER NOT NULL,
+	date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+	year INTEGER NOT NULL,
+	wm_yr_wk INTEGER NOT NULL,
+	store_item_id VARCHAR NOT NULL,
+	cluster INTEGER NOT NULL,
+	PRIMARY KEY (id)
+)
+
+CREATE TABLE decomposition (
+	id SERIAL NOT NULL,
+	item_id VARCHAR NOT NULL,
+	store_id VARCHAR NOT NULL,
+	date_id INTEGER NOT NULL,
+	date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+	cnt INTEGER NOT NULL,
+	year INTEGER NOT NULL,
+	wm_yr_wk INTEGER NOT NULL,
+	store_item_id VARCHAR NOT NULL,
+	trend FLOAT NOT NULL,
+	seasonality FLOAT NOT NULL,
+	PRIMARY KEY (id)
+)
