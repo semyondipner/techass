@@ -23,7 +23,7 @@ async def predict(request: PredictionRequest, session=Depends(get_session)):
     train = PredictionService.get_train(request.items_id, session)
 
     print("train ", train.head())
-    df = make_predictions2(28, request.prediction_date, train)
+    df = make_predictions2(28, train, request.prediction_date)
     df.drop(columns=['item_id'])
     df['item_id'] = df.store_item_id
     df.drop(columns=['store_item_id'], inplace=True)
