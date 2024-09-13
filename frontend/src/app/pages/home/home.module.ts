@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
-import { HomeServices } from './services/home.service';
+// import { HomeServices } from './services/home.service';
 import { HomeComponent } from './home.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HttpClientModule } from '@angular/common/http';
@@ -22,8 +22,6 @@ import {MatButtonModule} from '@angular/material/button';
     HomeRoutingModule,
     MatButtonModule
   ],
-  providers: [
-    HomeServices
-  ]
+
 })
 export class HomeModule { }

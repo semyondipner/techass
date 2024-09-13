@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { URLs } from '../../../base/urls';
-import { IAccChurn } from '../../../models/home/home.model';
 
 @Injectable({
   providedIn: 'root'

@@ -71,9 +71,9 @@
           </mat-form-field>
 
           <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataTableItemSales" >
+            <table mat-table [dataSource]="dataTableItemSales">
               <ng-container *ngFor="let column of displayedColumnsItemSales" [matColumnDef]="column">
-                <th mat-header-cell *matHeaderCellDef > {{ columnHeaderMapping.table_item_sales[column]
+                <th mat-header-cell *matHeaderCellDef> {{ columnHeaderMapping.table_item_sales[column]
                   }} </th>
                 <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
               </ng-container>
@@ -87,7 +87,7 @@
             </table>
 
 
-<mat-paginator #paginatorItemSales [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"
+            <mat-paginator #paginatorItemSales [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"
               aria-label="Выберите страницу товаров"></mat-paginator>
           </div>
         </section>
@@ -101,9 +101,9 @@
           </mat-form-field>
 
           <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataTableShopItemSales" >
+            <table mat-table [dataSource]="dataTableShopItemSales">
               <ng-container *ngFor="let column of displayedColumnsShopItemSales" [matColumnDef]="column">
-                <th mat-header-cell *matHeaderCellDef > {{
+                <th mat-header-cell *matHeaderCellDef> {{
                   columnHeaderMapping.table_shop_item_sales[column] }} </th>
                 <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
               </ng-container>
@@ -130,9 +130,9 @@
           </mat-form-field>
 
           <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataTableShopSales" >
+            <table mat-table [dataSource]="dataTableShopSales">
               <ng-container *ngFor="let column of displayedColumnsShopSales" [matColumnDef]="column">
-                <th mat-header-cell *matHeaderCellDef > {{ columnHeaderMapping.table_shop_sales[column]
+                <th mat-header-cell *matHeaderCellDef> {{ columnHeaderMapping.table_shop_sales[column]
                   }} </th>
                 <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
               </ng-container>
@@ -152,8 +152,19 @@
       </mat-tab>
     </mat-tab-group>
   </div>
-
-  
+  <div class="card" *ngIf="isAnalyticsExist">
+    <h2>Динамика изменения количества продаж</h2>
+    <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
+      [plotOptions]="chartOptions.plotOptions" [yaxis]="chartOptions.yaxis" [xaxis]="chartOptions.xaxis"
+      [stroke]="chartOptions.stroke" [grid]="chartOptions.grid" [fill]="chartOptions.fill"
+      [annotations]="chartOptions.annotations"></apx-chart>
+    <h2>Динамика изменения товарооборота</h2>
+    <apx-chart [series]="chartOptionsGmv.series" [chart]="chartOptionsGmv.chart"
+      [dataLabels]="chartOptionsGmv.dataLabels" [plotOptions]="chartOptionsGmv.plotOptions"
+      [yaxis]="chartOptionsGmv.yaxis" [xaxis]="chartOptionsGmv.xaxis" [stroke]="chartOptionsGmv.stroke"
+      [grid]="chartOptionsGmv.grid" [fill]="chartOptionsGmv.fill"
+      [annotations]="chartOptionsGmv.annotations"></apx-chart>
+  </div>
 </section>
 
 <div *ngIf="isLoading" class="spinner-container">

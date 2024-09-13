@@ -8,7 +8,21 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexPlotOptions, ApexYAxis, ApexAnnotations, ApexFill, ApexStroke, ApexGrid } from 'ng-apexcharts';
+import { Destroyer } from '../../base/destroyer';
 
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  yaxis: ApexYAxis;
+  xaxis: any; //ApexXAxis;
+  annotations: ApexAnnotations;
+  fill: ApexFill;
+  stroke: ApexStroke;
+  grid: ApexGrid;
+};
 interface ColumnHeaderMapping {
   [key: string]: string;
 }
@@ -45,7 +59,7 @@ interface ColumnMappings {
   templateUrl: './analytics-clients.component.html',
   styleUrls: ['./analytics-clients.component.less'],
 })
-export class AnalyticsClientsComponent implements AfterViewInit {
+export class AnalyticsClientsComponent extends Destroyer implements AfterViewInit {
   public stores$!: Observable<{ store_id: string }[]>;
   public items$!: Observable<{ item_id: string }[]>;
   public data_stores$ = [{ store_id: 'PostgreSQL' }];
@@ -53,6 +67,7 @@ export class AnalyticsClientsComponent implements AfterViewInit {
   public kpis: any;
   public isAnalyticsExist = false;
   public isLoading = false;
+  chartData: any = []
 
   columnHeaderMapping: ColumnMappings = {
     table_item_sales: {
@@ -83,6 +98,9 @@ export class AnalyticsClientsComponent implements AfterViewInit {
 
   displayedColumnsShopSales = ['store_id', 'uniq_item_sale', 'sales', 'gmv'];
   dataTableShopSales = new MatTableDataSource<any>([]);
+  
+  chartOptions: Partial<ChartOptions> | any= {};
+  chartOptionsGmv: Partial<ChartOptions> | any= {};
 
   @ViewChild('paginatorItemSales') paginatorItemSales!: MatPaginator;
   @ViewChild('sortItemSales') sortItemSales!: MatSort;
@@ -100,6 +118,7 @@ export class AnalyticsClientsComponent implements AfterViewInit {
     private _snackBar: MatSnackBar,
     private _cdr: ChangeDetectorRef
   ) {
+    super()
     this.stores$ = this._analyticsClientsService.getStores();
     this.items$ = this._analyticsClientsService.getItems();
     this.filters = new FormGroup({
@@ -149,6 +168,7 @@ export class AnalyticsClientsComponent implements AfterViewInit {
         })
       ).subscribe((response) => {
         if (response) {
+          this.chartData = response; 
           this.postCharts(store_ids, items_ids, date_str, date_end);
           this.kpis = response;
           this._cdr.detectChanges();
@@ -225,6 +245,9 @@ export class AnalyticsClientsComponent implements AfterViewInit {
       .subscribe((response) => {
         if (response) {
           this.isAnalyticsExist = true;
+          this.chartData = response;
+          this.updateChartOptions(); 
+          this.updateChartOptionsGmv(); 
           this.postTables(store_ids, items_ids, date_str, date_end);
 
           this.isLoading = false;
@@ -232,6 +255,152 @@ export class AnalyticsClientsComponent implements AfterViewInit {
         }
       });
   }
+  updateChartOptions(): void {
+    this.chartOptions = {
+        series: [
+            {
+                name: "Значение",
+                data: this.chartData.sales_dynamics.data.map((entry: any[]) => entry[1])  // value
+            },
+            {
+                name: "Скользящее среднее",
+                data: this.chartData.sales_dynamics.data.map((entry: any[]) => entry[2])  // rolling_mean
+            },
+            {
+                name: "Верхняя граница",
+                data: this.chartData.sales_dynamics.data.map((entry: any[]) => entry[3])  // upper_bound
+            },
+            {
+                name: "Нижняя граница",
+                data: this.chartData.sales_dynamics.data.map((entry: any[]) => entry[4])  // lower_bound
+            }
+        ],
+        chart: {
+            height: 500,
+            type: "line",
+            zoom: {
+              type: "x",
+              enabled: true,
+              autoScaleYaxis: true
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            width: 2,
+            curve: 'smooth'
+        },
+        xaxis: {
+            categories: this.chartData.sales_dynamics.data.map((entry: any[]) => this.formatDate(entry[0])),  // форматирование даты
+            tickPlacement: "on"
+        },
+        yaxis: {
+            title: {
+                text: 'Значение'
+            },
+            labels: {
+                formatter: (value: number) => value.toFixed(2)  // Округление значений до двух знаков
+            }
+        },
+        tooltip: {
+            shared: true,
+            intersect: false,
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shade: "light",
+            type: "horizontal",
+            shadeIntensity: 0.25,
+            gradientToColors: undefined,
+            inverseColors: true,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+          }
+        },
+        colors: ["#008FFB", "#00E396", "#FEB019", "#FF4560"] // Цвета для линий
+    };
+}
+
+updateChartOptionsGmv(): void {
+  this.chartOptionsGmv = {
+      series: [
+          {
+              name: "Значение",
+              data: this.chartData.gmv_dynamics.data.map((entry: any[]) => entry[1])  // value
+          },
+          {
+              name: "Скользящее среднее",
+              data: this.chartData.gmv_dynamics.data.map((entry: any[]) => entry[2])  // rolling_mean
+          },
+          {
+              name: "Верхняя граница",
+              data: this.chartData.gmv_dynamics.data.map((entry: any[]) => entry[3])  // upper_bound
+          },
+          {
+              name: "Нижняя граница",
+              data: this.chartData.gmv_dynamics.data.map((entry: any[]) => entry[4])  // lower_bound
+          }
+      ],
+      chart: {
+          height: 500,
+          type: "line",
+          zoom: {
+            type: "x",
+            enabled: true,
+            autoScaleYaxis: true
+          },
+      },
+      dataLabels: {
+          enabled: false
+      },
+      stroke: {
+          width: 2,
+          curve: 'smooth'
+      },
+      grid: {
+        row: {
+          colors: ["#fff", "#f2f2f2"]
+        }
+      },
+      xaxis: {
+          categories: this.chartData.gmv_dynamics.data.map((entry: any[]) => this.formatDate(entry[0])),  // форматирование даты
+          tickPlacement: "on"
+      },
+      yaxis: {
+          title: {
+              text: 'Значение'
+          },
+          labels: {
+              formatter: (value: number) => value.toFixed(2)  // Округление значений до двух знаков
+          }
+      },
+      tooltip: {
+          shared: true,
+          intersect: false,
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          shade: "light",
+          type: "horizontal",
+          shadeIntensity: 0.25,
+          gradientToColors: undefined,
+          inverseColors: true,
+          opacityFrom: 0.85,
+          opacityTo: 0.85,
+        }
+      },
+      colors: ["#008FFB", "#00E396", "#FEB019", "#FF4560"] // Цвета для линий
+  };
+}
+
+formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+}
+
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
