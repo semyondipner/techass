@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, status
-from models.prediction import Prediction, PredictionResponce
+from models.prediction import Prediction
 from database.connection import get_session
 from services import sales_dates as SalesDatesService
 from services import decomposition as DecompositionService
@@ -11,6 +11,7 @@ import sqlalchemy
 import pandas as pd
 from models.decomposition import Decomposition, DecompositionItem
 from models.clustering import ClusteringItem
+import requests
 
 from typing import List
 
@@ -19,7 +20,7 @@ loader_router = APIRouter(tags=["DataLoader"])
 DATA_PATH = "zip_data"
 
 
-@loader_router.post("/upload_data", response_model=PredictionResponce)
+@loader_router.post("/upload_data")
 async def upload_data(file: UploadFile = File(...), session=Depends(get_session)):       # noqa: B008
     print("upload_data ", file)
 
@@ -56,11 +57,26 @@ async def upload_data(file: UploadFile = File(...), session=Depends(get_session)
 
     print(unique_item_ids)
 
-    # ToDo добавить обращение к другом сервису
+    url = "http://84.201.147.115:9080/prediction/delete_prediction"
+    response = requests.get(url)
 
-    # responce =
+    url = "http://84.201.147.115:9080/prediction/predict"
 
-    return PredictionResponce(predictions=[])
+    body = {
+        "prediction_date": max_date.strftime("%Y-%m-%d"),
+        "items_id": unique_item_ids
+    }
+
+    response = requests.post(url, json=body)
+
+    if response.status_code == 200:
+        return {"message": "все хорошо, данные обработались"}
+
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail="При обработке данных произошла ошибка")
+
+
 
 
 @loader_router.get("/get_decomposition", response_model=List[DecompositionItem])
