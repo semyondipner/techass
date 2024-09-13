@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends
-from models.prediction import Prediction, PredictionResponce, PredictionRequest
+from models.prediction import Prediction, PredictionResponce, PredictionRequest, PredictItemId, PredictHistoryItem
 from database.connection import get_session
 from services import prediction as PredictionService
 from datetime import timedelta
 import pandas as pd
 import torch
 import numpy as np
+from typing import List
 from chronos import ChronosPipeline
 from datetime import datetime
 
@@ -18,7 +19,7 @@ pipeline = ChronosPipeline.from_pretrained(
     )
 
 
-@predict_router.post("/predict", response_model=PredictionResponce)
+@predict_router.post("/predict")
 async def predict(request: PredictionRequest, session=Depends(get_session)):
     train = PredictionService.get_train(request.items_id, session)
 
@@ -30,14 +31,19 @@ async def predict(request: PredictionRequest, session=Depends(get_session)):
     df['prediction_date'] = request.prediction_date
     PredictionService.save_prediction(df)
 
-    prediction = PredictionService.get_dataframe(session)
-    return prediction
+    return {"message":"Данные посчитаны, можете забирать"}
 
 
-@predict_router.get("/get_history_prediction", response_model=PredictionResponce)
-async def get_history_prediction(session=Depends(get_session)):
-    df = PredictionService.get_dataframe(session)
-    return df
+@predict_router.get("/get_history_item_id", response_model=List[PredictItemId])
+async def get_history_item_id(item_id: str, session=Depends(get_session)):
+    result = PredictionService.get_history_item_id(item_id, session)
+    return result
+
+
+@predict_router.get("/get_prediction_item_id", response_model=List[PredictHistoryItem])
+async def get_prediction_item_id(store_id: str, session=Depends(get_session)):
+    result = PredictionService.get_prediction_item_id(store_id, session)
+    return result
 
 
 @predict_router.get("/delete_prediction")
