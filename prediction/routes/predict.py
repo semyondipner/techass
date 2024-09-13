@@ -7,6 +7,7 @@ import pandas as pd
 import torch
 import numpy as np
 from chronos import ChronosPipeline
+from datetime import datetime
 
 predict_router = APIRouter(tags=["Predict"])
 
@@ -22,8 +23,7 @@ async def predict(request: PredictionRequest, session=Depends(get_session)):
     train = PredictionService.get_train(request.items_id, session)
 
     print("train ", train.head())
-    df = make_predictions(28, train)
-    #pd.read_csv("/Users/a.s.senina/PycharmProjects/techass/prediction/routes/predictions.csv")
+    df = make_predictions2(28, request.prediction_date, train)
     df.drop(columns=['item_id'])
     df['item_id'] = df.store_item_id
     df.drop(columns=['store_item_id'], inplace=True)
@@ -32,6 +32,12 @@ async def predict(request: PredictionRequest, session=Depends(get_session)):
 
     prediction = PredictionService.get_dataframe(session)
     return prediction
+
+
+@predict_router.get("/get_history_prediction", response_model=PredictionResponce)
+async def get_history_prediction(session=Depends(get_session)):
+    df = PredictionService.get_dataframe(session)
+    return df
 
 
 @predict_router.get("/delete_prediction")
@@ -59,6 +65,44 @@ def make_predictions(prediction_length, train: pd.DataFrame) -> pd.DataFrame:
         context = torch.tensor(store_item_id_df["cnt"].tolist())
         forecast = pipeline.predict(context, prediction_length)
         low, median, high = np.quantile(forecast[0].numpy(), [0.1, 0.5, 0.9], axis=0)
+
+        # Формирование DataFrame с результатами
+        data = {
+            'date': predict_range.tolist(),
+            'low': low.tolist(),
+            'median': median.tolist(),
+            'high': high.tolist()
+        }
+        result = pd.DataFrame.from_dict(data)
+        result['store_item_id'] = store_item_id
+        result['store_id'] = store_id
+        result['item_id'] = item_id
+
+        all_predicts.append(result)
+
+    return pd.concat(all_predicts)
+
+
+def make_predictions2(prediction_length, train: pd.DataFrame, start_prediction_date: datetime) -> pd.DataFrame:
+    """Создание предсказаний для каждого store_item_id."""
+
+    all_predicts = []
+
+    for store_item_id in train.store_item_id.unique():
+        store_item_id_df = train[train.store_item_id == store_item_id].copy()
+        store_id = store_item_id_df.store_id.unique()[0]
+        item_id = store_item_id_df.item_id.unique()[0]
+
+        full_date_range = pd.date_range(store_item_id_df.date.min(), start_prediction_date - timedelta(days=1))
+        full_date_range = pd.DataFrame(data=full_date_range, columns=['date'])
+        store_item_id_df = store_item_id_df.merge(full_date_range, on='date', how='right')
+
+        context = torch.tensor(store_item_id_df["sales"].tolist())
+        forecast = pipeline.predict(context, prediction_length)
+        low, median, high = np.quantile(forecast[0].numpy(), [0.1, 0.5, 0.9], axis=0)
+
+        predict_range = pd.date_range(start_prediction_date,
+                                      start_prediction_date + timedelta(days=prediction_length - 1))
 
         # Формирование DataFrame с результатами
         data = {

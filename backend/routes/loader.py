@@ -4,7 +4,6 @@ from database.connection import get_session
 from services import prices as PricesService
 from services import sales_dates as SalesDatesService
 from services import sales as SalesService
-from services import prediction as PredictionService
 from zipfile import ZipFile
 from datetime import timedelta
 import tempfile
@@ -15,18 +14,12 @@ import numpy as np
 import os
 from database.connection import engine_url
 
-predict_router = APIRouter(tags=["Predict"])
+loader_router = APIRouter(tags=["DataLoader"])
 
 DATA_PATH = "zip_data"
 
 
-@predict_router.get("/predict", response_model=PredictionResponce)
-async def predict(session=Depends(get_session)):
-    df = PredictionService.get_dataframe(session)
-    return df
-
-
-@predict_router.post("/upload_data", response_model=PredictionResponce)
+@loader_router.post("/upload_data", response_model=PredictionResponce)
 async def upload_data(file: UploadFile = File(...), session=Depends(get_session)):       # noqa: B008
     print("upload_data ", file)
 
@@ -67,6 +60,7 @@ async def upload_data(file: UploadFile = File(...), session=Depends(get_session)
 
     # ToDo добавить обращение к другом сервису
 
+    # responce =
 
     return PredictionResponce(predictions=[])
 
