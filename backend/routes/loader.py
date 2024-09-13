@@ -3,12 +3,15 @@ from models.prediction import Prediction, PredictionResponce
 from database.connection import get_session
 from services import sales_dates as SalesDatesService
 from services import decomposition as DecompositionService
+from services import clustering as ClusteringService
 from services import sales as SalesService
 from zipfile import ZipFile
 import tempfile
 import sqlalchemy
 import pandas as pd
 from models.decomposition import Decomposition, DecompositionItem
+from models.clustering import ClusteringItem
+
 from typing import List
 
 loader_router = APIRouter(tags=["DataLoader"])
@@ -65,6 +68,19 @@ async def upload_data(file: UploadFile = File(...), session=Depends(get_session)
 @loader_router.get("/get_decomposition", response_model=List[DecompositionItem])
 async def get_decomposition(store_id_item: str, session=Depends(get_session)):
     result = DecompositionService.get_dataframe(store_id_item, session)
+    return result
+
+
+@loader_router.get("/get_clustering", response_model=List[ClusteringItem])
+async def get_clustering(cluster: int, store_id: str, session=Depends(get_session)):
+    result = ClusteringService.get_dataframe(cluster, store_id, session)
+    return result
+
+
+@loader_router.get("/get_clusters", response_model=List[int])
+async def get_clusters(session=Depends(get_session)):
+    result = ClusteringService.get_clusters(session)
+    print("result", result)
     return result
 
 
