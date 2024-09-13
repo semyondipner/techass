@@ -1,6 +1,7 @@
 <section class="section" *ngIf="!isLoading" >
+  <h1 class="section__title">Прогнозирование спроса</h1>
+
   <div class="card">
-    <h1 class="section__title">Аналитика покупок</h1>
       <apx-chart
       [series]="chartOptions.series"
       [chart]="chartOptions.chart"
