@@ -5,17 +5,14 @@ import { MatListModule } from '@angular/material/list';
 import { Router, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DateAdapter } from '@angular/material/core';
-
-
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, MatNativeDateModule, MatFormFieldModule, MatDatepickerModule, FormsModule, ReactiveFormsModule, JsonPipe, MatFormFieldModule, RouterOutlet, MatDatepickerModule, MatDividerModule, MatListModule, RouterModule, MatIconModule],
+  imports: [CommonModule, MatNativeDateModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, JsonPipe, MatFormFieldModule, RouterOutlet, MatDividerModule, MatListModule, RouterModule, MatIconModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
 
@@ -26,12 +23,11 @@ export class AppComponent {
 
   listMain = [
     { name: 'Файлы', isActive: false, url: '/upload', png: 'downloading' },
-    { name: 'Интеграции', isActive: false, url: '/integration', png: 'warning' },
+    // { name: 'Интеграции', isActive: false, url: '/integration', png: 'warning' },
     // { name: 'Каталог интеграций', isActive: false, url: '/upload', png: 'downloading' },
     // { name: 'Управления интеграциями', isActive: false, url: '/upload', png: 'downloading' },
   ];
 
-  range: FormGroup;
 
   listAnalytics = [
     { name: 'Аналитика покупок', isActive: true, url: '/analytics-clients', png: 'dot-chart' },
@@ -45,13 +41,6 @@ export class AppComponent {
   constructor(private router: Router, private _fb: FormBuilder, private _dateAdapter: DateAdapter<Date>) {
     const list = [...this.listMain, ...this.listAnalytics]
 
-    this.range = this._fb.group({
-      start: [],
-      end: [],
-    });
-
-    this._dateAdapter.setLocale('ru')
-
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const currentUrl = event.url;
@@ -63,7 +52,7 @@ export class AppComponent {
 
     const elements = document.querySelectorAll('.mdc-list-item__content::before');
     elements.forEach(element => {
-      element.textContent = ''; // Удаляем текст
+      element.textContent = ''; 
     });
   }
 

@@ -1,35 +1,161 @@
-<section class="section" >
+<section class="section" *ngIf="!isLoading">
   <h1 class="section__title">Аналитика покупок</h1>
 
-  <div class="card"  >
-    <h3>Фильтры</h3>
-    <form [formGroup]="filters">
-
-    <mat-form-field appearance="outline" class="filter__item">
-      <mat-label>Магазины</mat-label>
-
-      <mat-select formControlName="store" [hideSingleSelectionIndicator]="true" multiple>
-          <mat-option
-              *ngFor="let store of stores$ | async; let i = index"
-              [value]="store"
-          >
-                  {{ store.store_id }}
+  <div class="card">
+    <h2>Фильтры</h2>
+    <form [formGroup]="filters" class="form">
+      <mat-form-field appearance="outline" class="filter__item">
+        <mat-label>Источник данных</mat-label>
+        <mat-select [hideSingleSelectionIndicator]="true" multiple>
+          <mat-option *ngFor="let data_store of data_stores$; let i = index" [value]="data_store">
+            {{ data_store.store_id }}
           </mat-option>
-      </mat-select>
-  </mat-form-field>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="filter__item">
-    <mat-label>Товары</mat-label>
+      <mat-form-field appearance="outline" class="filter__item">
+        <mat-label>Магазины</mat-label>
+        <mat-select formControlName="store_ids" [hideSingleSelectionIndicator]="true" multiple>
+          <mat-option [value]="'All'">All</mat-option>
+          <mat-option *ngFor="let store of stores$ | async" [value]="store.store_id">
+            {{ store.store_id }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-select formControlName="item" [hideSingleSelectionIndicator]="true" multiple>
-        <mat-option
-            *ngFor="let item of items$ | async; let i = index"
-            [value]="item"
-        >
-                {{ item.item_id }}
-        </mat-option>
-    </mat-select>
-</mat-form-field>
-  </form>
+      <mat-form-field appearance="outline" class="filter__item">
+        <mat-label>Товары</mat-label>
+        <mat-select formControlName="items_ids" [hideSingleSelectionIndicator]="true" multiple>
+          <mat-option [value]="'All'">All</mat-option>
+          <mat-option *ngFor="let item of items$ | async" [value]="item.item_id">
+            {{ item.item_id }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter__item date-form">
+        <mat-label>Выберите период</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="date_str" placeholder="С">
+          <input matEndDate formControlName="date_end" placeholder="По">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </form>
+    <button mat-button class="btn" [ngClass]="{ 'disabled': filters.invalid }" [disabled]="filters.invalid"
+      (click)="createReport()">
+      Применить фильтры
+    </button>
   </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <section *ngIf="kpis">
+      <h3>KPI</h3>
+      <mat-chip-set aria-label="KPI">
+        <mat-chip>Количество уникальных магазинов: {{ kpis.kpi?.num_uniq_shops }}</mat-chip>
+        <mat-chip>Количество уникальных товаров: {{ kpis.kpi?.num_uniq_items }}</mat-chip>
+        <mat-chip>Суммарное количество продаж: {{ kpis.kpi?.total_sales }}</mat-chip>
+        <mat-chip>Суммарный товарооборот: {{ kpis.kpi?.total_gmv }}</mat-chip>
+      </mat-chip-set>
+    </section>
+  </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <mat-tab-group>
+      <mat-tab label="Продажи предметов">
+        <section *ngIf="dataTableItemSales">
+          <mat-form-field сlass="filter">
+            <mat-label>Фильтровать</mat-label>
+            <input matInput (keyup)="applyFilter($event, dataTableItemSales)" placeholder="Поиск..." #input>
+          </mat-form-field>
+
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataTableItemSales" >
+              <ng-container *ngFor="let column of displayedColumnsItemSales" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef > {{ columnHeaderMapping.table_item_sales[column]
+                  }} </th>
+                <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsItemSales"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsItemSales;"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">Нет данных, соответствующих запросу "{{input.value}}"</td>
+              </tr>
+            </table>
+
+
+<mat-paginator #paginatorItemSales [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"
+              aria-label="Выберите страницу товаров"></mat-paginator>
+          </div>
+        </section>
+      </mat-tab>
+
+      <mat-tab label="Продажи товаров по магазинам">
+        <section *ngIf="dataTableShopItemSales">
+          <mat-form-field сlass="filter">
+            <mat-label>Фильтровать</mat-label>
+            <input matInput (keyup)="applyFilter($event, dataTableShopItemSales)" placeholder="Поиск..." #input>
+          </mat-form-field>
+
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataTableShopItemSales" >
+              <ng-container *ngFor="let column of displayedColumnsShopItemSales" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef > {{
+                  columnHeaderMapping.table_shop_item_sales[column] }} </th>
+                <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsShopItemSales"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsShopItemSales;"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">Нет данных, соответствующих запросу "{{input.value}}"</td>
+              </tr>
+            </table>
+
+            <mat-paginator #paginatorShopItemSales [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"
+              aria-label="Выберите страницу товаров"></mat-paginator>
+          </div>
+        </section>
+      </mat-tab>
+
+      <mat-tab label="Продажи магазина">
+        <section *ngIf="dataTableShopSales">
+          <mat-form-field сlass="filter">
+            <mat-label>Фильтровать</mat-label>
+            <input matInput (keyup)="applyFilter($event, dataTableShopSales)" placeholder="Поиск..." #input>
+          </mat-form-field>
+
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataTableShopSales" >
+              <ng-container *ngFor="let column of displayedColumnsShopSales" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef > {{ columnHeaderMapping.table_shop_sales[column]
+                  }} </th>
+                <td mat-cell *matCellDef="let row"> {{ row[column] }} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsShopSales"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsShopSales;"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">Нет данных, соответствующих запросу "{{input.value}}"</td>
+              </tr>
+            </table>
+
+            <mat-paginator #paginatorShopSales [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"
+              aria-label="Выберите страницу магазина"></mat-paginator>
+          </div>
+        </section>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  
 </section>
+
+<div *ngIf="isLoading" class="spinner-container">
+  <span class="loader"></span>
+</div>

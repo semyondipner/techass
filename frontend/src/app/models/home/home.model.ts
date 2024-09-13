@@ -30,3 +30,4 @@ export interface IRegion {
     balance: number,
     lst_pmnt: number
 }
+

@@ -14,5 +14,8 @@ export const URLs = {
     analytics: {
         analytics: api + 'analytics/get_stores',
         items: api + 'analytics/get_items',
+        kpis: api + 'analytics/get_kpis',
+        tables: api + 'analytics/get_tables',
+        charts: api + 'analytics/get_charts',
     }
 }
