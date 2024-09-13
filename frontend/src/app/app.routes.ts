@@ -18,8 +18,12 @@ export const routes: Routes = [
     loadChildren: () => import('./pages/upload/upload.module').then(m => m.UploadModule),
   },
   { 
+    path: 'decomposition', 
+    loadChildren: () => import('./pages/decomposition/decomposition.module').then(m => m.DecompositionModule),
+  },
+  { 
     path: 'clustering', 
-    loadChildren: () => import('./pages/clustering/clustering.module').then(m => m.СlusteringModule),
+    loadChildren: () => import('./pages/clustering/clustering.module').then(m => m.ClusteringModule),
   },
   // { 
   //   path: 'integration', 

@@ -33,9 +33,10 @@ export class AppComponent {
     { name: 'Аналитика покупок', isActive: true, url: '/analytics-clients', png: 'dot-chart' },
     { name: 'Прогнозирование спроса', isActive: false, url: '/demand-forecasting', png: 'regression' },
     { name: 'Кластеризация товаров', isActive: false, url: '/clustering', png: 'radio-waves' },
+    { name: 'Декомпозиция', isActive: false, url: '/decomposition', png: 'discount' },
     // { name: 'ABCXYZ-анализ', isActive: false, url: '/analytics-clients', png: 'abc-2' },
     // { name: 'Детектирование аномалий', isActive: false, url: '/churn-years', png: 'warning' },
-    // { name: 'Casual Inference', isActive: false, url: '', png: 'discount' },
+ 
     // { name: 'Спектральный анализ', isActive: false, url: '', png: 'radio-waves' },
   ];
 

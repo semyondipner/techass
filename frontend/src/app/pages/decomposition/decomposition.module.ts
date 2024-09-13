@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { СlusteringRoutingModule } from './clustering-routing.module';
+import { DecompositionRoutingModule } from './decomposition-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
-import { СlusteringComponent } from './clustering.component';
-import { СlusteringService } from './services/clustering.service';
+import { DecompositionComponent } from './decomposition.component';
+import { DecompositionService } from './services/decomposition.service';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,13 +24,13 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   declarations: [
-    СlusteringComponent
+    DecompositionComponent
   ],
   imports: [
     HttpClientModule,
     CommonModule,
     RouterModule,
-    СlusteringRoutingModule,
+    DecompositionRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MatChipsModule,
@@ -50,10 +50,10 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
   ], 
   providers: [
-    СlusteringService,
+    DecompositionService,
     DatePipe
 
   ]
 })
-export class ClusteringModule { }
+export class DecompositionModule { }
 
