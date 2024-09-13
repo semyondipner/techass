@@ -1,5 +1,6 @@
 from sqlmodel import Field, SQLModel
 from datetime import datetime
+from pydantic import BaseModel
 
 
 class Clustering(SQLModel, table=True):
@@ -13,3 +14,9 @@ class Clustering(SQLModel, table=True):
     wm_yr_wk: int
     store_item_id: str
     cluster: int
+
+
+class ClusteringItem(BaseModel):
+    store_id: str
+    cnt: int
+    date: datetime
