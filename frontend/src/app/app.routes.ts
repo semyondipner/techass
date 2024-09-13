@@ -17,9 +17,9 @@ export const routes: Routes = [
     path: 'upload', 
     loadChildren: () => import('./pages/upload/upload.module').then(m => m.UploadModule),
   },
-  { 
-    path: 'integration', 
-    loadChildren: () => import('./pages/integration/integration.module').then(m => m.IntegrationModule),
-  },
+  // { 
+  //   path: 'integration', 
+  //   loadChildren: () => import('./pages/integration/integration.module').then(m => m.IntegrationModule),
+  // },
 
 ];

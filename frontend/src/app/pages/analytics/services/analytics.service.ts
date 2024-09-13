@@ -1,31 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { URLs } from '../../../base/urls';
-import { IChurnYears } from '../../../models/home/home.model';
+import { Observable } from 'rxjs';
+
+export interface DayPrediction {
+  date: string;
+  low: number;
+  median: number;
+  high: number;
+}
+
+export interface Prediction {
+  item_id: string;
+  store_id: string;
+  prediction_date: string;
+  day_prediction: DayPrediction[];
+}
+
+export interface PredictionsResponse {
+  predictions: Prediction[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AnalyticsService {
   constructor(private _httpClient: HttpClient) {}
 
-  getData() {
-    return this._httpClient.get<IChurnYears[]>(URLs.churn.years);
+  
+  getPredictions(): Observable<PredictionsResponse> {
+    return this._httpClient.get<PredictionsResponse>(URLs.prediction.predict);
   }
-
-  // getSingleDomen1(item: number) {
-  //   return this._httpClient.get<IHome[]>(URLs.domen1.method1 + `/${item}`);
-  // }
-
-  // createUser(item: IHome) {
-  //   return this._httpClient.post(URLs.domen1.method1, item);
-  // }
-
-  // updateDomen1(item: IHome) {
-  //   return this._httpClient.put(URLs.domen1.method1, item);
-  // }
-
-  // deleteDomen1(item: number) {
-  //   return this._httpClient.delete(URLs.domen1.method1 + `/${item}`);
-  // }
 }

@@ -1,105 +1,21 @@
-<section class="section">
-  <mat-tab-group (selectedTabChange)="applyRegionFilter()" class="mat-tab">
-    <mat-tab label="Процент оттока клиентов">
-      <div class="card" *ngIf="isFiltersActive">
-        <h2>Процент оттока клиентов</h2>
-        <div class="wrapper">
-          <div id="chartOptions">
-            <apx-chart
-            [series]="chartOptions.series"
-            [chart]="chartOptions.chart"
-            [dataLabels]="chartOptions.dataLabels"
-            [plotOptions]="chartOptions.plotOptions"
-            [yaxis]="chartOptions.yaxis"
-            [xaxis]="chartOptions.xaxis"
-            [stroke]="chartOptions.stroke"
-            [grid]="chartOptions.grid"
-            [fill]="chartOptions.fill"
-            [annotations]="chartOptions.annotations"
-          ></apx-chart>
-          </div>
-          <div class="spinner" *ngIf="isLoading">
-            <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
-  
-    <mat-tab label="Сумма балансов по оттоку">
-      <div class="card" *ngIf="isFiltersActive">
-        <h2>Сумма балансов по оттоку</h2>
-        <div class="wrapper">
-          <div id="chartOptionsBalance">
-            <apx-chart
-            [series]="chartOptionsBalance.series"
-            [chart]="chartOptionsBalance.chart"
-            [dataLabels]="chartOptionsBalance.dataLabels"
-            [plotOptions]="chartOptionsBalance.plotOptions"
-            [yaxis]="chartOptionsBalance.yaxis"
-            [xaxis]="chartOptionsBalance.xaxis"
-            [stroke]="chartOptionsBalance.stroke"
-            [grid]="chartOptionsBalance.grid"
-            [fill]="chartOptionsBalance.fill"
-            [annotations]="chartOptionsBalance.annotations"
-          ></apx-chart>
-          </div>
-          <div class="spinner" *ngIf="isLoading">
-            <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
-  
-    <mat-tab label="Сумма взносов по оттоку">
-      <div class="card" *ngIf="isFiltersActive">
-        <h2>Сумма взносов по оттоку</h2>
-        <div class="wrapper">
-          <div id="chartOptionsLst">
-            <apx-chart
-            [series]="chartOptionsLst.series"
-            [chart]="chartOptionsLst.chart"
-            [dataLabels]="chartOptionsLst.dataLabels"
-            [plotOptions]="chartOptionsLst.plotOptions"
-            [yaxis]="chartOptionsLst.yaxis"
-            [xaxis]="chartOptionsLst.xaxis"
-            [stroke]="chartOptionsLst.stroke"
-            [grid]="chartOptionsLst.grid"
-            [fill]="chartOptionsLst.fill"
-            [annotations]="chartOptionsLst.annotations"
-          ></apx-chart>
-          </div>
-          <div class="spinner" *ngIf="isLoading">
-            <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-
-
+<section class="section" *ngIf="!isLoading" >
   <div class="card">
-    <h2 *ngIf="!isFiltersActive">Аналитические показатели</h2>
-
-    <mat-form-field>
-      <input
-        matInput
-        placeholder="Выберите регион"
-        [formControl]="regControl"
-        [matAutocomplete]="autoRegion"
-      />
-      <mat-autocomplete #autoRegion="matAutocomplete">
-        <mat-option
-          *ngFor="let option of filteredRegOptions | async"
-          [value]="option"
-          >{{ option }}</mat-option
-        >
-      </mat-autocomplete>
-    </mat-form-field>
-
-    <div>
-      <button mat-button class="btn" (click)="applyRegionFilter()">
-        Применить фильтр
-      </button>
-    </div>
+    <h1 class="section__title">Аналитика покупок</h1>
+      <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [dataLabels]="chartOptions.dataLabels"
+      [plotOptions]="chartOptions.plotOptions"
+      [yaxis]="chartOptions.yaxis"
+      [xaxis]="chartOptions.xaxis"
+      [stroke]="chartOptions.stroke"
+      [grid]="chartOptions.grid"
+      [fill]="chartOptions.fill"
+      [annotations]="chartOptions.annotations"
+    ></apx-chart>
   </div>
 </section>
+
+<div *ngIf="isLoading" class="spinner-container">
+  <span class="loader"></span>
+</div>

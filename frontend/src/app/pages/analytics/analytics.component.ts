@@ -1,13 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 import { Observable, catchError, map, of, startWith, takeUntil } from 'rxjs';
    
 import { Destroyer } from '../../base/destroyer';
-import { IChurnYears, IRegion } from '../../models/home/home.model';
-import { MatPaginator } from '@angular/material/paginator';
 
-import { HomeServices } from '../home/services/home.service';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -20,8 +17,8 @@ import {
   ApexStroke,
   ApexGrid
 } from "ng-apexcharts";
-import { listOfCities } from '../analytics-clients/analytics-clients.mock';
-import { FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AnalyticsService, DayPrediction, Prediction, PredictionsResponse } from './services/analytics.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -42,161 +39,117 @@ export type ChartOptions = {
   styleUrls: ['./analytics.component.less']
 })
 
-export class AnalyticsComponent extends Destroyer implements OnInit {
-  tableData: IChurnYears[] = [];
-  regionsData: IRegion[] = [];
-  @ViewChild("chart") chart!: ChartComponent;
-  chartOptionsBalance: Partial<ChartOptions> | any= {};
-  chartOptionsLst: Partial<ChartOptions> | any= {};
-  chartOptions: Partial<ChartOptions> | any= {}; // Установка значения по умолчанию для chartOptions
-  isLoading: boolean = false;
-  listOfCities = listOfCities;
-  dataSource: MatTableDataSource<IChurnYears>;
-  dataSourceReg: MatTableDataSource<IRegion>;
-  filteredRegOptions: Observable<string[]>;
-  selectedRegion: string | null = null;
-  isFiltersActive = false;
-  regControl = new FormControl();
+export class AnalyticsComponent extends Destroyer implements OnInit{
+  public isLoading = true;
+  chartData: any = []
 
-  constructor(private _homeService: HomeServices) {
-    super();
+  chartOptions: Partial<ChartOptions> | any= {};
 
-    this.filteredRegOptions = this.regControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterReg(value))
-    );
-
-    this.dataSource = new MatTableDataSource<IChurnYears>(this.tableData);
-
-    this.dataSourceReg = new MatTableDataSource<IRegion>(this.regionsData);
+  constructor(
+    private _cdr: ChangeDetectorRef,
+    private _snackBar: MatSnackBar,
+    private _analyticsService: AnalyticsService
+  ) {
+    super()
   }
-
-  private _filterReg(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.listOfCities.filter(option => option.toLowerCase().includes(filterValue));
-  }
-
 
   ngOnInit(): void {
-    this.getDataForTable();
-    this.getRegions();
+    this.getPredictions()
   }
 
-
-  applyRegionFilter() {
-    this.selectedRegion = this.regControl.value
-    if (this.selectedRegion) {
-      this.isFiltersActive = true;
-
-      this.dataSource.filter = this.selectedRegion.trim().toUpperCase();
-      this.dataSourceReg.filter = this.selectedRegion.trim().toUpperCase();
-      this.updateChartOptions(); 
-      this.updateChartOptionsBalance();
-      this.updateChartOptionsLst()
-    } 
-  }
-
-  getDataForTable(): void {
+  getPredictions() {
     this.isLoading = true;
-    this._homeService
-      .getData()
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((e: any) => {
-          if (e.error.detail) {
-            console.log(e);
-          } else {
-            console.log('Ошибка');
+    this._analyticsService
+        .getPredictions()
+        .pipe(
+            catchError((err: any) => {
+                const errorMessage = err.error && err.error.detail ? err.error.detail : "Произошла ошибка при загрузке файла.";
+                this.openSnackBar(errorMessage, "Закрыть");
+                return of(null);
+            })
+        )
+        .subscribe((response: PredictionsResponse | null) => {
+            if (response) {
+                this.chartData = response.predictions;
+
+                this.updateChartOptions();
+
+                this._cdr.detectChanges();
+                this.isLoading = false;
+            }
+        });
+}
+updateChartOptions(): void {
+  // Извлекаем данные для графика
+
+
+  const dates: string[] = [];
+    const medianData: number[] = [];
+    const lowData: number[] = [];
+    const highData: number[] = [];
+    this.chartData.forEach((prediction: Prediction) => {
+        prediction.day_prediction.forEach((day: DayPrediction) => {
+            dates.push(this.formatDate(day.date));
+            medianData.push(day.median);
+            lowData.push(day.low);
+            highData.push(day.high);
+        });
+    });
+
+
+  this.chartOptions = {
+      series: [
+          {
+              name: "Прогноз (медиана)",
+              data: medianData
+          },
+          {
+              name: "Нижняя граница",
+              data: lowData
+          },
+          {
+              name: "Верхняя граница",
+              data: highData
           }
-          return of(null);
-        })
-      )
-      .subscribe((response) => {
-        if (response) {
-          this.tableData = response.filter(entry => {
-            // Получаем текущий год
-            const currentYear = 2022;
-            // Оставляем только данные за последние 5 лет
-            return entry.year >= currentYear - 4;
-          });
-      
-          this.dataSource.data = this.tableData;
-
-          // Обновляем настройки графика после получения данных
-
-        }
-        this.isLoading = false;
-      });
-  }
-
-  getRegions(): void {
-    this.isLoading = true;
-    this._homeService
-      .getRegions()
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((e: any) => {
-          if (e.error.detail) {
-            console.log(e);
-          } else {
-            console.log('Ошибка');
-          }
-          return of(null);
-        })
-      )
-      .subscribe((response) => {
-        if (response) {
-          this.regionsData = response;
-          console.log(response);
-      
-          this.dataSourceReg.data = this.regionsData;
-
-        }
-        this.isLoading = false;
-      });
-  }
-
-  
-  updateChartOptions(): void {
-    const filteredData = this.tableData.filter(entry => entry.region.trim().toUpperCase() === this.selectedRegion);
-
-    this.chartOptions = {
-      series: this.getSeriesData(filteredData),
-      annotations: {},
+      ],
       chart: {
-        height: 500,
-        type: "bar"
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: "50%",
-        }
+          height: 500,
+          type: "line",
+          zoom: {
+            type: "x",
+            enabled: true,
+            autoScaleYaxis: true
+          },
       },
       dataLabels: {
-        enabled: false
+          enabled: false
       },
       stroke: {
-        width: 2
+          width: [2, 2, 2],
+          curve: 'smooth'
       },
+   
       grid: {
         row: {
           colors: ["#fff", "#f2f2f2"]
         }
       },
       xaxis: {
-        labels: {
-        },
-        categories: this.getXCategories(filteredData),
-        tickPlacement: "on"
-      },
+          categories: dates,
+          tickPlacement: "on",
+          
+      },   
       yaxis: {
-        title: {
-        },
-        labels: {
-          formatter: function(value: any) {
-            return value.toFixed(3); // Округляем значение до двух знаков
+          title: {
+              text: 'Значение'
+          },
+          labels: {
+              formatter: (value: number) => value.toFixed(2)
           }
-      }
+      },
+      tooltip: {
+          shared: true,
+          intersect: false,
       },
       fill: {
         type: "gradient",
@@ -209,182 +162,28 @@ export class AnalyticsComponent extends Destroyer implements OnInit {
           opacityFrom: 0.85,
           opacityTo: 0.85,
         }
-      }
-    };
-}
-
-
-updateChartOptionsBalance(): void {
-  const filteredData = this.regionsData.filter(entry => entry.region.trim().toUpperCase() === this.selectedRegion);
-
-  this.chartOptionsBalance = {
-    series: this.getSeriesDataBalance(filteredData),
-    annotations: {},
-    chart: {
-      height: 500,
-      type: "bar"
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: "50%",
-        borderColor: "#D36AB9" 
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      width: 2,
-      colors: ["#A76AD2",
-      "#CA6AD2",
-      "#D36AB9"]
-    },
-    grid: {
-      row: {
-        colors: ["#fff", "#f2f2f2"]
-      }
-    },
-    xaxis: {
-      labels: {
       },
-      categories: this.getXCategoriesBalance(filteredData),
-      tickPlacement: "on"
-    },
-    yaxis: {
-      title: {
-      },
-      labels: {
-        formatter: function(value: any) {
-          return value.toFixed(2); // Округляем значение до двух знаков
-        }
-    }
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "light",
-        type: "horizontal",
-        shadeIntensity: 0.25,
-        gradientToColors: undefined,
-        inverseColors: true,
-        opacityFrom: 0.85,
-        opacityTo: 0.85,
-      },
-      colors: ["#A76AD2",
-      "#CA6AD2",
-      "#D36AB9"]
-
-   
-    }
+      colors: ["#00E396", "#FF4560", "#008FFB"] 
   };
+  this.isLoading = false;
+
+  this._cdr.detectChanges();
 }
 
 
-updateChartOptionsLst(): void {
-  const filteredData = this.regionsData.filter(entry => entry.region.trim().toUpperCase() === this.selectedRegion);
-
-  this.chartOptionsLst = {
-    series: this.getSeriesDataLst(filteredData),
-    annotations: {},
-    chart: {
-      height: 500,
-      type: "bar"
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: "50%",
-        borderColor: "#00A98F" 
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      width: 2,
-      colors: ["#00A81F",
-      "#00A857",
-      "#00A98F"]
-    },
-    grid: {
-      row: {
-        colors: ["#fff", "#f2f2f2"]
-      }
-    },
-    xaxis: {
-      labels: {
-      },
-      categories: this.getXCategoriesLst(filteredData),
-      tickPlacement: "on"
-    },
-    yaxis: {
-      title: {
-      },
-      labels: {
-        formatter: function(value: any) {
-          return value.toFixed(2); // Округляем значение до двух знаков
-        }
-    }
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "light",
-        type: "horizontal",
-        shadeIntensity: 0.25,
-        gradientToColors: undefined,
-        inverseColors: true,
-        opacityFrom: 0.85,
-        opacityTo: 0.85,
-      },
-      colors: ["#00A81F",
-        "#00A857",
-        "#00A98F"]
-    },
-  };
+formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 }
 
-getXCategoriesBalance(data: IRegion[]): string[] {
-    return data.map(entry => entry.quarter);
-}
 
-getSeriesDataBalance(data: IRegion[]): ApexAxisChartSeries {
-    return [{
-        name: "Сумма балансов по оттоку",
-        data: data.map(entry => ({
-            x: entry.quarter,
-            y: entry.balance
-        }))
-    }];
-}
-
-getXCategoriesLst(data: IRegion[]): string[] {
-  return data.map(entry => entry.quarter);
-}
-
-getSeriesDataLst(data: IRegion[]): ApexAxisChartSeries {
-  return [{
-      name: "Сумма взносов по оттоку",
-      data: data.map(entry => ({
-          x: entry.quarter,
-          y: entry.lst_pmnt
-      }))
-  }];
-}
-
-getXCategories(data: IChurnYears[]): string[] {
-  return data.map(entry => entry.quarter);
-}
-
-getSeriesData(data: IChurnYears[]): ApexAxisChartSeries {
-  return [{
-      name: "Процент оттока клиентов",
-      data: data.map(entry => ({
-          x: entry.quarter,
-          y: entry.churn
-      }))
-  }];
-}
-
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 3000,
+      verticalPosition: 'top',
+      horizontalPosition: 'right',
+    });
+  }
 }
 
 

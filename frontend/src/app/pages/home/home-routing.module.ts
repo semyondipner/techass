@@ -20,10 +20,10 @@ const routes: Routes = [
     path: 'upload',
     loadChildren: () => import('../upload/upload.module').then(m => m.UploadModule)
   },
-  {
-    path: 'integration',
-    loadChildren: () => import('../integration/integration.module').then(m => m.IntegrationModule)
-  },
+  // {
+  //   path: 'integration',
+  //   loadChildren: () => import('../integration/integration.module').then(m => m.IntegrationModule)
+  // },
 ];
 
 @NgModule({
