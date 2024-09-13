@@ -97,7 +97,7 @@ def make_predictions2(prediction_length, train: pd.DataFrame, start_prediction_d
         full_date_range = pd.DataFrame(data=full_date_range, columns=['date'])
         store_item_id_df = store_item_id_df.merge(full_date_range, on='date', how='right')
 
-        context = torch.tensor(store_item_id_df["sales"].tolist())
+        context = torch.tensor(store_item_id_df["cnt"].tolist())
         forecast = pipeline.predict(context, prediction_length)
         low, median, high = np.quantile(forecast[0].numpy(), [0.1, 0.5, 0.9], axis=0)
 
