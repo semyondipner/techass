@@ -1,0 +1,13 @@
+python-decouple==3.8
+sqlmodel==0.0.22
+fastapi==0.112.2
+python-decouple==3.8
+psycopg2-binary==2.9.9
+pandas==2.2.2
+python-multipart==0.0.9
+uvicorn==0.30.6
+torch==2.2.2
+numpy==1.25.2
+chronos @ git+https://github.com/amazon-science/chronos-forecasting.git@eb7bdfc047de3e7af972b4ee7cf23a7968b7daa3
+
+

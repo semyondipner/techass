@@ -2,17 +2,16 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from routes.predict import predict_router
-from routes.analytics import analytics_router
 from database.connection import conn
 
-app = FastAPI()
+predict = FastAPI()
 
 # Эмуляция состояния приложения
 is_ready = False
 is_alive = True
 
 origins = ["*"]
-app.add_middleware(
+predict.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
@@ -21,26 +20,24 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
+@predict.on_event("startup")
 def on_startup():
     conn()
 
-    print("service ready")
+    print("prediction service ready")
     global is_ready
     is_ready = True
 
 
-app.include_router(predict_router, prefix="/prediction")
-app.include_router(analytics_router, prefix="/analytics")
+predict.include_router(predict_router, prefix="/prediction")
 
 
-
-@app.get("/")
+@predict.get("/")
 async def my_first_get_api():
-    return {"message":"First FastAPI example"}
+    return {"message": "Prediction Service"}
 
 
-@app.get("/healthcheck")
+@predict.get("/healthcheck")
 async def healthcheck():
     health = is_alive and is_ready
     if health:
@@ -50,5 +47,5 @@ async def healthcheck():
     raise HTTPException(status_code=503, detail="Service unhealthy")
 
 if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8080,
+    uvicorn.run("api:predict", host="0.0.0.0", port=9080,
                 reload=True)
