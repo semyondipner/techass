@@ -41,8 +41,8 @@ async def get_history_item_id(item_id: str, session=Depends(get_session)):
 
 
 @predict_router.get("/get_prediction_item_id", response_model=List[PredictHistoryItem])
-async def get_prediction_item_id(store_id: str, session=Depends(get_session)):
-    result = PredictionService.get_prediction_item_id(store_id, session)
+async def get_prediction_item_id(store_item_id: str, session=Depends(get_session)):
+    result = PredictionService.get_prediction_item_id(store_item_id, session)
     return result
 
 

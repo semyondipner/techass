@@ -50,4 +50,3 @@ class PredictHistoryItem(BaseModel):
     median: float
     high: float
     item_id: str
-

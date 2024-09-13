@@ -88,9 +88,9 @@ def get_history_item_id(item_id, session):
     return items
 
 
-def get_prediction_item_id(store_id, session):
+def get_prediction_item_id(store_item_id, session):
     query = session.query(Prediction.date, Prediction.low, Prediction.median, Prediction.high, Prediction.item_id
-                          ).filter(Prediction.store_id == store_id)
+                          ).filter(Prediction.store_item_id == store_item_id)
 
     results = query.all()
 
