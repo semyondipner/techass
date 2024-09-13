@@ -9,7 +9,9 @@ from tqdm.notebook import tqdm
 from chronos import ChronosPipeline
 
 class SalesPredictor:
-    def __init__(self, data_path: str, prediction_length: int, store_item_ids: list):
+    def __init__(self, data_path: str, prediction_length: int, store_item_ids: list, start_prediction_date: dt.datetime):
+        
+        self.start_prediction_date = start_prediction_date
         self.store_item_ids = store_item_ids
         self.data_path = data_path
         self.prediction_length = prediction_length
@@ -39,39 +41,39 @@ class SalesPredictor:
 
 
     def make_predictions(self, train: pd.DataFrame) -> pd.DataFrame:
-        """Создание предсказаний для каждого store_item_id."""
-        
-        all_predicts = []
-        
-        train.date = pd.to_datetime(train.date)
-        start_date = train['date'].max() + timedelta(days=1)
-        end_date = start_date + timedelta(days=self.prediction_length - 1)
-        predict_range = pd.date_range(start_date, end_date)
-        
-        for store_item_id in train.store_item_id.unique():
-            store_item_id_df = train[train.store_item_id == store_item_id].copy()
+            """Создание предсказаний для каждого store_item_id."""
             
-            store_id = store_item_id_df.store_id.unique()[0]
-            item_id = store_item_id_df.item_id.unique()[0]
-            context = torch.tensor(store_item_id_df["cnt"].tolist())
-            forecast = self.pipeline.predict(context, self.prediction_length)
-            low, median, high = np.quantile(forecast[0].numpy(), [0.1, 0.5, 0.9], axis=0)
-
-            # Формирование DataFrame с результатами
-            data = {
-                'date': predict_range.tolist(),
-                'low': low.tolist(),
-                'median': median.tolist(),
-                'high': high.tolist()
-            }
-            result = pd.DataFrame.from_dict(data)
-            result['store_item_id'] = store_item_id
-            result['store_id'] = store_id
-            result['item_id'] = item_id
+            all_predicts = []
             
-            all_predicts.append(result)
+            for store_item_id in train.store_item_id.unique():
 
-        return pd.concat(all_predicts)
+                store_item_id_df = check[check.store_item_id == store_item_id].copy()
+                store_id = store_item_id_df.store_id.unique()[0]
+                item_id = store_item_id_df.item_id.unique()[0]
+
+                full_date_range = pd.date_range(store_item_id_df.date.min(), self.start_prediction_date - timedelta(days=1))
+                full_date_range = pd.DataFrame(data=full_date_range, columns=['date'])
+                store_item_id_df = store_item_id_df.merge(full_date_range, on='date', how='right')
+                
+                context = torch.tensor(store_item_id_df["sales"].tolist())
+                forecast = self.pipeline.predict(context, self.prediction_length)
+                low, median, high = np.quantile(forecast[0].numpy(), [0.1, 0.5, 0.9], axis=0)
+
+                # Формирование DataFrame с результатами
+                data = {
+                    'date': predict_range.tolist(),
+                    'low': low.tolist(),
+                    'median': median.tolist(),
+                    'high': high.tolist()
+                }
+                result = pd.DataFrame.from_dict(data)
+                result['store_item_id'] = store_item_id
+                result['store_id'] = store_id
+                result['item_id'] = item_id
+                
+                all_predicts.append(result)
+
+            return pd.concat(all_predicts)
 
     def run(self):
         """Основной метод для запуска предсказаний."""
@@ -84,6 +86,9 @@ class SalesPredictor:
 # Пример использования
 if __name__ == "__main__":
     data_path = "data"
+    ### Достать из теста - минимальная дата, которая есть в тесте
+    start_prediction_date = dt.datetime(2015, 12, 23)
+    ###
     prediction_length = 28
     ids = [
     'STORE_2_085', 
@@ -93,5 +98,7 @@ if __name__ == "__main__":
     'STORE_2_090', 
     'Имитация айди без истории'
     ]
-    predictor = SalesPredictor(data_path=data_path, prediction_length=prediction_length, store_item_ids=ids)
+
+    predictor = SalesPredictor(data_path=data_path, prediction_length=prediction_length, store_item_ids=ids, start_prediction_date=start_prediction_date)
+
     predictions = predictor.run()
