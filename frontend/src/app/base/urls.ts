@@ -1,9 +1,13 @@
 import { environment } from "../../environments/environment";
 const api = environment.api;
+const apiV2 = environment.apiV2;
 export const URLs = {
     prediction: {
-        upload: api + 'prediction/upload_data',
-        predict: api + 'prediction/predict'
+        upload: api + 'loader/upload_data',
+        clustering: api + 'loader/get_clustering',
+        clusters: api + 'loader/get_clusters',
+        decomposition: api + 'loader/get_decomposition',
+        predict: apiV2 + 'prediction/get_history_prediction'
     },
 
     analytics: {
