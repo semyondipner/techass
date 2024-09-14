@@ -113,23 +113,26 @@ export class СlusteringComponent extends Destroyer implements AfterViewInit {
 
   postClusteringData(data: { store_id: string, cnt: number, date: Date }[]): void {
     const formattedData = data.map(item => ({
-      store_id: item.store_id,
-      cnt: item.cnt,
-      date: this.formatDate(item.date),
+        store_id: item.store_id,
+        cnt: item.cnt,
+        date: this.formatDate(item.date),
     }));
+
+    // Сортируем данные по дате
+    formattedData.sort((a: { date: string }, b: { date: string }) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     this.dataTableShopSales = new MatTableDataSource(formattedData); // Initialize MatTableDataSource with formatted data
 
-    setTimeout(() => {this.dataTableShopSales.paginator = this.paginatorShopSales
-      this._cdr.detectChanges();
+    setTimeout(() => {
+        this.dataTableShopSales.paginator = this.paginatorShopSales;
+        this._cdr.detectChanges();
     });
 
     this.isLoading = false;
     this.isAnalyticsExist = true; // Show analytics if loaded
 
     this._cdr.detectChanges(); // Force change detection if needed
-  }
-
+}
 
 
 
@@ -144,55 +147,71 @@ export class СlusteringComponent extends Destroyer implements AfterViewInit {
 
 
   updateChartOptions(): void {
-    const dates = this.chartData.map((entry: any) => this.formatDate(entry.date));
-    const salesCounts = this.chartData.map((entry: any) => entry.cnt);
+    const startDate = this.filters.get('startDate')?.value;
+    const endDate = this.filters.get('endDate')?.value;
+
+    // Фильтрация данных по дате
+    const filteredData = this.chartData.filter((entry: any) => {
+        const entryDate = new Date(entry.date);
+        const isAfterStartDate = !startDate || entryDate >= new Date(startDate);
+        const isBeforeEndDate = !endDate || entryDate <= new Date(endDate);
+        return isAfterStartDate && isBeforeEndDate;
+    });
+
+    // Сортируем отфильтрованные данные по дате
+    filteredData.sort((a: { date: string }, b: { date: string }) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    const dates = filteredData.map((entry: any) => this.formatDate(entry.date));
+    const salesCounts = filteredData.map((entry: any) => entry.cnt);
 
     this.chartOptions = {
-      series: [
-        {
-          name: "Кластеризация",
-          data: salesCounts,  // Fetch sales count dynamically
-        }
-      ],
-      chart: {
-        height: 500,
-        type: "line",
-        zoom: {
-          type: "x",
-          enabled: true,
-          autoScaleYaxis: true
+        series: [
+            {
+                name: "Кластеризация",
+                data: salesCounts,
+            }
+        ],
+        chart: {
+            height: 500,
+            type: "line",
+            zoom: {
+                type: "x",
+                enabled: true,
+                autoScaleYaxis: true
+            },
+            animations: {
+                enabled: false  // Отключаем анимацию
+            },
         },
-        animations: {
-          enabled: false  // Отключаем анимацию
+        dataLabels: {
+            enabled: false
         },
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        width: 2,
-        curve: 'smooth'
-      },
-      xaxis: {
-        categories: dates,  // Use the extracted dates
-        tickPlacement: "on"
-      },
-      yaxis: {
-        title: {
-          text: 'Суммарные продажи по кластеру'
+        stroke: {
+            width: 2,
+            curve: 'smooth'
         },
-        labels: {
-          formatter: (value: number) => value.toFixed(0)  // Форматирование
-        }
-      },
-      tooltip: {
-        shared: true,
-        intersect: false,
-      },
-      colors: ["#008FFB"] // One color for line
+        xaxis: {
+            categories: dates,
+            tickPlacement: "on"
+        },
+        yaxis: {
+            title: {
+                text: 'Суммарные продажи по кластеру'
+            },
+            labels: {
+                formatter: (value: number) => value.toFixed(0)  // Форматирование
+            }
+        },
+        tooltip: {
+            shared: true,
+            intersect: false,
+        },
+        colors: ["#008FFB"] // Один цвет для линии
     };
-  }
 
+    // Обновляем график
+    this._cdr.detectChanges();
+}
 
   formatDate(dateString: string | Date): string {
     const date = new Date(dateString);
