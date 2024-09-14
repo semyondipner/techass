@@ -7,7 +7,8 @@ export const URLs = {
         clustering: api + 'loader/get_clustering',
         clusters: api + 'loader/get_clusters',
         decomposition: api + 'loader/get_decomposition',
-        predict: apiV2 + 'prediction/get_history_prediction'
+        predict: apiV2 + 'prediction/get_history_item_id',
+        pred: apiV2 + 'prediction/get_prediction_item_id',
     },
 
     analytics: {

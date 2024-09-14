@@ -20,6 +20,15 @@ const routes: Routes = [
     path: 'upload',
     loadChildren: () => import('../upload/upload.module').then(m => m.UploadModule)
   },
+
+  { 
+    path: 'decomposition', 
+    loadChildren: () => import('../decomposition/decomposition.module').then(m => m.DecompositionModule),
+  },
+  { 
+    path: 'clustering', 
+    loadChildren: () => import('../clustering/clustering.module').then(m => m.ClusteringModule),
+  },
   // {
   //   path: 'integration',
   //   loadChildren: () => import('../integration/integration.module').then(m => m.IntegrationModule)
