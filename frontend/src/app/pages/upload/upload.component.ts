@@ -31,6 +31,7 @@ export class UploadComponent extends Destroyer {
 
   upload() {
     if (this.file) {
+      this.openSnackBar('Дождитесь окончания загрузки, прежде чем покинуть страницу', "Закрыть");
       this._uploadService.uploadfile(this.file).subscribe({
         next: () => {
           this.openSnackBar("Файл загружен успешно", "Закрыть");

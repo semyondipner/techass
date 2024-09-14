@@ -283,6 +283,9 @@ export class AnalyticsClientsComponent extends Destroyer implements AfterViewIni
           enabled: true,
           autoScaleYaxis: true
         },
+        animations: {
+          enabled: false  // Отключаем анимацию
+        },
       },
       dataLabels: {
         enabled: false
@@ -349,6 +352,11 @@ export class AnalyticsClientsComponent extends Destroyer implements AfterViewIni
           enabled: true,
           autoScaleYaxis: true
         },
+        animations: {
+          enabled: false  // Отключаем анимацию
+        },
+
+
       },
       dataLabels: {
         enabled: false
