@@ -162,6 +162,9 @@ export class СlusteringComponent extends Destroyer implements AfterViewInit {
           enabled: true,
           autoScaleYaxis: true
         },
+        animations: {
+          enabled: false  // Отключаем анимацию
+        },
       },
       dataLabels: {
         enabled: false

@@ -79,7 +79,7 @@ export class AnalyticsComponent extends Destroyer {
     const item_id = this.filters.get('item_id')?.value;
 
     if (item_id) {
-      this.getHistory(item_id);
+      // this.getHistory(item_id);
       this.getPredictions(item_id);
     } else {
       this.openSnackBar("Данные выбраны неверно", "Закрыть");
@@ -163,56 +163,32 @@ export class AnalyticsComponent extends Destroyer {
     }
   }
   
-
   updateChartOptions(): void {
     const dates: string[] = [];
-    const cntData: number[] = [];
     const lowData: number[] = [];
     const medianData: number[] = [];
     const highData: number[] = [];
-
-    // Заполняем данные из getHistory
-    if (Array.isArray(this.historyData)) {
-      this.historyData.forEach((history: HistoryEntry) => {
-        dates.push(this.formatDate(history.date));
-        cntData.push(history.cnt);
-        // Заполняем данные из getPredictions по умолчанию как 0 или null
-        lowData.push(0);
-        medianData.push(0);
-        highData.push(0);
-      });
-    }
-
-    // Определяем lastDateFromHistory для дальнейшей обработки
-    const lastDateFromHistory = this.historyData.length > 0 ? new Date(this.historyData[this.historyData.length - 1].date) : null;
-
-    // Заполняем данные из getPredictions
+  
+    // Заполняем данные только из getPredictions
     if (Array.isArray(this.predictionsData)) {
       this.predictionsData.forEach((prediction: PredictionEntry) => {
         const predictionDate = new Date(prediction.date);
-        // Проверяем, если эта дата позже последней даты истории
-        if (lastDateFromHistory && predictionDate > lastDateFromHistory) {
-          // Добавляем только уникальные даты в массив dates
-          const formattedDate = this.formatDate(prediction.date);
-          if (!dates.includes(formattedDate)) {
-            dates.push(formattedDate);
-            cntData.push(0); // Заполняем значение для источника данных cnt как null
-          }
+        const formattedDate = this.formatDate(prediction.date);
+  
+        // Добавляем уникальные даты
+        if (!dates.includes(formattedDate)) {
+          dates.push(formattedDate);
           // Заполняем данные low, median и high для этой даты
-          lowData.push(prediction.low);
-          medianData.push(prediction.median);
-          highData.push(prediction.high);
+          lowData.push(Number(prediction.low.toFixed(4))); // Округляем до 4 знаков
+          medianData.push(Number(prediction.median.toFixed(4))); // Округляем до 4 знаков
+          highData.push(Number(prediction.high.toFixed(4))); // Округляем до 4 знаков
         }
       });
     }
-
+  
     // Настройка параметров графика
     this.chartOptions = {
       series: [
-        {
-          name: "Продажи (cnt) ",
-          data: cntData
-        },
         {
           name: "Нижняя граница прогноза",
           data: lowData
@@ -234,12 +210,15 @@ export class AnalyticsComponent extends Destroyer {
           enabled: true,
           autoScaleYaxis: true
         },
+        animations: {
+          enabled: false  // Отключаем анимацию
+        },
       },
       dataLabels: {
         enabled: false
       },
       stroke: {
-        width: [2, 2, 2, 2],
+        width: [2, 2, 2],
         curve: 'smooth'
       },
       grid: {
@@ -256,7 +235,7 @@ export class AnalyticsComponent extends Destroyer {
           text: 'Значения'
         },
         labels: {
-          formatter: (value: number) => value !== null ? value.toFixed(2) : value
+          formatter: (value: number) => value !== null ? value.toFixed(4) : value
         }
       },
       tooltip: {
@@ -266,15 +245,12 @@ export class AnalyticsComponent extends Destroyer {
       fill: {
         type: "solid",
       },
-      colors: ["#B0B0B0", "#7F7F7F", "#5F5F5F", "#B0B0B0"] // разные оттенки серого
+      colors: ["#7F7F7F", "#B0B0B0", "#5F5F5F"] // разные оттенки серого
     };
-
+  
     // Обновляем график
-
-
     this._cdr.detectChanges();
   }
-
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
