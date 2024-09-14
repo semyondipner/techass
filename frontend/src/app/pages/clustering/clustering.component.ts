@@ -161,6 +161,15 @@ export class СlusteringComponent extends Destroyer implements AfterViewInit {
     // Сортируем отфильтрованные данные по дате
     filteredData.sort((a: { date: string }, b: { date: string }) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
+    // Если после фильтрации и сортировки данных длина массива равна нулю, нужно обработать это
+    if (filteredData.length === 0) {
+        this.chartOptions = {
+            series: [],
+            // Остальные параметры графика можно сбросить или задать значения по умолчанию
+        };
+        return; // Не продолжайте выполнение, если нет данных для отображения
+    }
+
     const dates = filteredData.map((entry: any) => this.formatDate(entry.date));
     const salesCounts = filteredData.map((entry: any) => entry.cnt);
 
@@ -212,6 +221,7 @@ export class СlusteringComponent extends Destroyer implements AfterViewInit {
     // Обновляем график
     this._cdr.detectChanges();
 }
+
 
   formatDate(dateString: string | Date): string {
     const date = new Date(dateString);
