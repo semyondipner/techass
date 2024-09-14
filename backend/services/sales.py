@@ -3,6 +3,7 @@ from models.sales_dates import SalesDate
 import pandas as pd
 from database.connection import engine_url
 from typing import List
+from sqlmodel import delete
 
 
 def create_sales(file):
@@ -47,3 +48,9 @@ def get_dataframe(unique_item_ids, session):
     df.item_id = df.item_id.apply(lambda x: x.split('_')[-1])
 
     return df
+
+
+def delete_data(session):
+    session.exec(delete(Sale))
+    session.commit()
+    session.close()

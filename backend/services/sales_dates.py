@@ -1,7 +1,7 @@
 from models.sales_dates import SalesDate
 import pandas as pd
 from database.connection import engine_url
-from sqlmodel import func
+from sqlmodel import func, delete
 
 
 def create_sales_dates(file):
@@ -15,3 +15,10 @@ def get_max_date(session):
     result = query.scalar()
 
     return result
+
+
+def delete_data(session):
+    session.exec(delete(SalesDate))
+    session.commit()
+    session.close()
+
