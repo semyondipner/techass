@@ -1,36 +1,25 @@
 <section class="section" *ngIf="!isLoading" >
   <h1 class="section__title">Прогнозирование спроса</h1>
-  <!-- <div class="card">
+  <div class="card">
     <h2>Фильтры</h2>
     <form [formGroup]="filters" class="form">
 
       <mat-form-field appearance="outline" class="filter__item">
         <mat-label>Товары</mat-label>
-        <mat-select formControlName="items_ids" [hideSingleSelectionIndicator]="true" multiple>
-          <mat-option [value]="'All'">All</mat-option>
+        <mat-select formControlName="item_id" [hideSingleSelectionIndicator]="true">
           <mat-option *ngFor="let item of items$ | async" [value]="item.item_id">
             {{ item.item_id }}
           </mat-option>
         </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter__item date-form">
-        <mat-label>Выберите период</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate formControlName="date_str" placeholder="С">
-          <input matEndDate formControlName="date_end" placeholder="По">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
       </mat-form-field>
     </form>
     <button mat-button class="btn" [ngClass]="{ 'disabled': filters.invalid }" [disabled]="filters.invalid"
       (click)="createReport()">
       Применить фильтры
     </button>
-  </div> -->
+  </div>
 
-  <div class="card">
+  <div class="card" *ngIf="isAnalyticsExist">
       <apx-chart
       [series]="chartOptions.series"
       [chart]="chartOptions.chart"
@@ -43,8 +32,54 @@
       [fill]="chartOptions.fill"
       [annotations]="chartOptions.annotations"
     ></apx-chart>
+    <span>  *при наличии исторических данных прогноз не осуществляется и равен 0</span>
+  
   </div>
+
+  <div class="card" *ngIf="isAnalyticsExist">
+    <h2>Таблица прогнозов</h2>
+    <mat-form-field class="filter">
+      <mat-label>Фильтровать</mat-label>
+      <input matInput (keyup)="applyFilter($event, dataTablePredictions)" placeholder="Поиск..." #input>
+    </mat-form-field>
+    
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataTablePredictions">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef> Дата </th>
+          <td mat-cell *matCellDef="let row"> {{ row.date }} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="low">
+          <th mat-header-cell *matHeaderCellDef> Нижняя граница </th>
+          <td mat-cell *matCellDef="let row"> {{ row.low }} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="median">
+          <th mat-header-cell *matHeaderCellDef> Медиана </th>
+          <td mat-cell *matCellDef="let row"> {{ row.median }} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="high">
+          <th mat-header-cell *matHeaderCellDef> Верхняя граница </th>
+          <td mat-cell *matCellDef="let row"> {{ row.high }} </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsPredictions"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsPredictions;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">Нет данных, соответствующих запросу "{{input.value}}"</td>
+        </tr>
+      </table>
+  
+      <mat-paginator #paginatorPredictions [pageSize]="10" [pageSizeOptions]="[5, 10, 25]"
+        aria-label="Выберите страницу прогноза">
+      </mat-paginator>
+    </div>
+  </div>
+  
 </section>
+
 
 <div *ngIf="isLoading" class="spinner-container">
   <span class="loader"></span>
