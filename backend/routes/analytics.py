@@ -1,25 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from models.sales import Store, Item
-from models.analytics import AnalyticsPredictions
+""" Analytics Dashboard """
 from typing import List
-from database.connection import get_session
-from services import sales as SalesService
-
-analytics_router = APIRouter(tags=["Analytics"])
-
-@analytics_router.get("/get_stores", response_model=List[Store])
-async def get_stores(session=Depends(get_session)):
-    stores = SalesService.get_stores(session)
-    return stores
-
-@analytics_router.get("/get_items", response_model=List[Item])
-async def get_items(session=Depends(get_session)):
-    items = SalesService.get_items(session)
-    return items
-
-# # =======================
-# #   Аналитические ручки
-# # =======================
 
 # Data Processing
 import json
@@ -27,10 +7,35 @@ import numpy as np # For Anomaly get_charts
 import pandas as pd
 
 # DataBase Management
-from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, MetaData
+
+# Fast API
+from fastapi import APIRouter, Depends, HTTPException, status
+
+# Local Imports 
+from models.sales import Store, Item
+from models.analytics import AnalyticsPredictions
+
+from services import sales as SalesService
+from database.connection import get_session
+
+
+analytics_router = APIRouter(tags=["Analytics"])
+
+@analytics_router.get("/get_stores", response_model=List[Store])
+async def get_stores(session=Depends(get_session)):
+    """ Get Stores for a selector in the Dashboard """
+    stores = SalesService.get_stores(session)
+    return stores
+
+@analytics_router.get("/get_items", response_model=List[Item])
+async def get_items(session=Depends(get_session)):
+    """ Get Items for a selector in the Dashboard """
+    items = SalesService.get_items(session)
+    return items
 
 
 # =======================
@@ -231,8 +236,13 @@ def get_charts(df: pd.DataFrame) -> dict:
         "gmv_dynamics": gmv_dynamics
     }
 
+# ==========================
+#    MAIN FUNCTIONS-ARMS
+# ==========================
+
 @analytics_router.post("/get_kpis")
 async def get_kpis_arm(request: AnalyticsPredictions):
+    """ KPI """
     df = get_dataset(
         request.date_str, request.date_end,
         request.store_ids, request.items_ids
@@ -241,6 +251,7 @@ async def get_kpis_arm(request: AnalyticsPredictions):
 
 @analytics_router.post("/get_tables")
 async def get_tables_arm(request: AnalyticsPredictions):
+    """ TABLES """
     df = get_dataset(
         request.date_str, request.date_end,
         request.store_ids, request.items_ids
@@ -249,6 +260,7 @@ async def get_tables_arm(request: AnalyticsPredictions):
 
 @analytics_router.post("/get_charts")
 async def get_charts_arm(request: AnalyticsPredictions):
+    """ Charts with Anomaly Detection """
     df = get_dataset(
         request.date_str, request.date_end,
         request.store_ids, request.items_ids
