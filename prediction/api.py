@@ -1,8 +1,14 @@
+""" Prediction Service Run """
+
+# FastAPI
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from routes.predict import predict_router
+
+# Local Imports
 from database.connection import conn
+from routes.predict import predict_router
+
 
 predict = FastAPI()
 
@@ -39,6 +45,7 @@ async def my_first_get_api():
 
 @predict.get("/healthcheck")
 async def healthcheck():
+    """ healthcheck """
     health = is_alive and is_ready
     if health:
         return {"status": "OK"}
