@@ -7,10 +7,10 @@ import pandas as pd
 import psycopg2
 import sqlalchemy
 from sqlmodel import delete
+from database.connection import engine_url
 
 # Local Imports
 from models.price import Price
-from database.connection import engine_url
 
 
 def create_price(price: Price, session):
