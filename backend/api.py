@@ -1,9 +1,15 @@
+""" Backend Service Run """
+
+# FastAPI
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+
+# Local Imports
+from database.connection import conn
 from routes.loader import loader_router
 from routes.analytics import analytics_router
-from database.connection import conn
+
 
 app = FastAPI()
 
@@ -50,5 +56,4 @@ async def healthcheck():
     raise HTTPException(status_code=503, detail="Service unhealthy")
 
 if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8080,
-                reload=True)
+    uvicorn.run("api:app", host="0.0.0.0", port=8080, reload=True)
