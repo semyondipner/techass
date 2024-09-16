@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class Decomposition(SQLModel, table=True):
+    """ Decomposition """
     id: int = Field(default=None, primary_key=True)
     item_id: str
     store_id: str
@@ -18,6 +19,7 @@ class Decomposition(SQLModel, table=True):
 
 
 class DecompositionItem(BaseModel):
+    """ DecompositionItem """
     store_item_id: str
     date: datetime
     cnt: int

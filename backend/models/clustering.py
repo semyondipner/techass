@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class Clustering(SQLModel, table=True):
+    """ Clustering """
     id: int = Field(default=None, primary_key=True)
     item_id: str
     store_id: str
@@ -17,6 +18,7 @@ class Clustering(SQLModel, table=True):
 
 
 class ClusteringItem(BaseModel):
+    """ ClusteringItem """
     store_id: str
     cnt: int
     date: datetime

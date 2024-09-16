@@ -1,11 +1,12 @@
+""" Prediction """
+from typing import List
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List
-
 from sqlmodel import Field, SQLModel
 
 
 class Prediction(SQLModel, table=True):
+    """ Prediction """
     item_id: str = Field(primary_key=True)
     store_id: str = Field(primary_key=True)
     date: datetime = Field(primary_key=True)
@@ -16,6 +17,7 @@ class Prediction(SQLModel, table=True):
 
 
 class DayPrediction(BaseModel):
+    """ DayPrediction """
     date: datetime
     low: float
     median: float
@@ -23,6 +25,7 @@ class DayPrediction(BaseModel):
 
 
 class PredictionItem(BaseModel):
+    """ PredictionItem """
     item_id: str
     store_id: str
     prediction_date: datetime
@@ -30,5 +33,5 @@ class PredictionItem(BaseModel):
 
 
 class PredictionResponce(BaseModel):
+    """ PredictionResponce """
     predictions: List[PredictionItem]
-

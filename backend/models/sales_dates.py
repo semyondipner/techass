@@ -1,9 +1,11 @@
-from sqlmodel import Field, SQLModel
-from datetime import datetime
+""" Sales Dates """
 from typing import Optional
+from datetime import datetime
+from sqlmodel import Field, SQLModel
 
 
 class SalesDate(SQLModel, table=True):
+    """ SalesDate """
     id: int = Field(default=None, primary_key=True)
     date: datetime
     wm_yr_wk: int
