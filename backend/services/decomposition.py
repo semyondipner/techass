@@ -1,9 +1,16 @@
+""" Spectral Analysis (Decomposition) """
 from models.decomposition import Decomposition, DecompositionItem
 
 
 def get_dataframe(store_item_id, session):
-    query = session.query(Decomposition.store_item_id, Decomposition.date, Decomposition.cnt, Decomposition.trend, Decomposition.seasonality
-                          ).where(Decomposition.store_item_id==store_item_id)
+    query = (
+        session
+        .query(
+            Decomposition.store_item_id, Decomposition.date, 
+            Decomposition.cnt, Decomposition.trend, Decomposition.seasonality
+        )
+        .where(Decomposition.store_item_id==store_item_id)
+    )
 
     results = query.all()
 
