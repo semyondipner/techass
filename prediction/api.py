@@ -54,5 +54,4 @@ async def healthcheck():
     raise HTTPException(status_code=503, detail="Service unhealthy")
 
 if __name__ == "__main__":
-    uvicorn.run("api:predict", host="0.0.0.0", port=9080,
-                reload=True)
+    uvicorn.run("api:predict", host="0.0.0.0", port=9080, reload=True)
