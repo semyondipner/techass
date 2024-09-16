@@ -74,3 +74,13 @@ cd ~/techass/backend
 docker build -t backend .
 docker run -d -p 8080:8080 backend
 ```
+
+### Prediction
+
+Создаем и запускаем docker образ
+
+```bash
+cd ~/techass/prediction
+docker build -t prediction .
+docker run -d -p 9080:9080 prediction
+```
