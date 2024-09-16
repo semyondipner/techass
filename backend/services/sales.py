@@ -1,9 +1,16 @@
-from models.sales import Sale, Store, Item
-from models.sales_dates import SalesDate
-import pandas as pd
-from database.connection import engine_url
+""" sales.py """
 from typing import List
+
+# Data Processing
+import pandas as pd
+
+# SQL Connections
 from sqlmodel import delete
+from database.connection import engine_url
+
+# Local Imports
+from models.sales_dates import SalesDate
+from models.sales import Sale, Store, Item
 
 
 def create_sales(file):
