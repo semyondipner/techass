@@ -1,6 +1,7 @@
-from sqlmodel import Field, SQLModel
-from datetime import datetime
+""" sales_dates.py """
 from typing import Optional
+from datetime import datetime
+from sqlmodel import Field, SQLModel
 
 
 class SalesDate(SQLModel, table=True):
